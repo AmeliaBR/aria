@@ -6545,6 +6545,120 @@
   <section class="normative">
     <h2>Accessible Name and Description Calculation</h2>
     <p>The terms <a class="termref">accessible name</a> and <a class="termref">accessible description</a> are properties provided in all <a class="termref" data-lt="accessibility API">accessibility APIs</a>. The name of the properties may differ across APIs but they serve the same function: as a container for a short (name) or longer (description) string of text. </p>
+    
+    <p>
+      <a class="termref" data-lt="user agent">User agents</a> MUST conform 
+      to the section titled 
+      <a class="accname" href="#mapping_additional_nd">Name and Description</a> 
+      of the Accessible Name and Description: Computation and API Mappings [[!ACCNAME-AAM]] specification,
+      with the modifications given in this section for interpretting HTML semantic features.
+    </p>
+    
+    <p class="note">
+      If the <code>img</code> element is exposed in the <a class="termref">accessibility tree</a> and the computed text alternative is empty, then check for the presence of <code>role="presentation"</code> or any labeling attribute that specifies an empty label, specifically <a href="http://www.w3.org/TR/wai-aria-1.1/#aria-label"><code>aria-label</code></a>, <a href="http://www.w3.org/TR/wai-aria-1.1/#aria-labelledby"><code>aria-labelledby</code></a>, <code>alt</code> or <code>title</code>. The presence of any of these indicates the author's intention to indicate that the <code>img</code> is decorative or redundant. In this case, the user agent <strong class="rfc2119">must</strong> set the name to an empty string. If none of these attributes are present, this indicates the author simply did not provide an accessible label for the image, and the implementation <strong class="rfc2119">must</strong> return an <a class="termref">accessible name</a> of NULL instead of an empty string if the <a class="termref">accessibility API</a> supports it. This hints to the <a class="termref" data-lt="Assistive Technologies">assistive technology</a> to do its own heuristic processing to repair the missing <a class="termref">accessible name</a>.
+    </p>
+    
+    <section id="mapping_additional_nd_te_element">
+      <h4>Text Alternative for an Element</h4>
+      <p>
+        The algorithm for determining the text alternative of an element, defined in the <a class="accname" href="#mapping_additional_nd_te_element">Text Alternative for an Element</a> section of the Accessible Name and Description: Computation and API Mappings 1.1 [[!ACCNAME-AAM]], should be applied using the following rules for the semantic features of HTML.
+      </p>
+      <ol>
+        <li id="step-element-hidden">
+          <p>
+            In <a class="accname" href="#step-element-hidden">Step 1</a>, a <a class="termref">hidden</a> element includes any of the following:
+          </p>
+          <ul>
+            <li>an element with a computed style of <code>display: none</code> for itself or any ancestor</li>
+            <li>an element with a computed style of <code>visibility: hidden</code></li>
+            <li>an element with a <code>hidden</code> attribute or an <code>aria-hidden="true"</code> attribute for itself or any ancestor</li>
+            <li>an <code>input</code> element of <code>type="hidden"</code></li>
+            <li>any child content of a <code>details</code> element that is in the closed state, other than the <code>summary</code> element and its child content</li>
+          </ul>
+        </li>
+        <li id="step-element-ariaby">
+          <p>
+            <a class="accname" href="#step-element-ariaby">Step 2</a> is unchanged.
+          </p>
+        </li>
+        <li id="step-element-embedded-control">
+          <p>
+            In <a class="accname" href="#step-element-embedded-control">Step 3</a>, the current values of native input elements (for use as alternative text when embedded within a parent widget) are determined as follows:
+          </p>
+          <ul>
+            <li>
+              <p>
+                For an <code>input</code> element (other than inputs whose <code>type</code> is <code>submit</code>, <code>reset</code>, <code>button</code>, <code>image</code>, or <code>hidden</code>, which would never be included in this step), use the first of these options that returns a non-empty string: 
+              </p>
+              <ol>
+                <li>the current <code>value</code> <abbr title="Document Object Model">DOM</abbr> property, </li>
+                <li>the <code>placeholder</code> attribute, </li>
+                <li>the <code>aria-placeholder</code> attribute</li>
+              </ol>
+              <p>
+                If none of those returns a value, use the empty string.
+              </p>
+            </li>
+            <li>
+              <p>
+                For a <code>textarea</code> elements, use the first of these options that returns a non-empty string: 
+              </p>
+              <ol>
+                <li>the <code>innerText</code> content of the element, </li>
+                <li>the <code>placeholder</code> attribute, </li>
+                <li>the <code>aria-placeholder</code> attribute</li>
+              </ol>
+              <p>
+                If none of those returns a value, use the empty string.
+              </p>
+            </li>
+          </ul>
+        </li>
+        <li id="step-element-label">
+          <p>
+            <a class="accname" href="#step-element-label">Step 4</a> is unchanged. 
+          </p>
+        </li>
+        <li id="step-element-native">
+          <p>
+            In <a class="accname" href="#step-element-native">Step 5</a>, the following attributes and elements define a text alternative when computing an <a>accessible name</a>, in order of priority:
+          </p>
+          <ol>
+            <li>
+              <p>The <code>alt</code> attribute, for an <code>img</code> or <code>input type="image"</code> element.</p>
+            </li>
+            <li>
+              <p>
+                The <code>value</code> attribute, for any button-style <code>input</code> element (that is, with a <code>type</code> of <code>submit</code>, <code>reset</code>, <code>button</code>, or <code>image</code>); if value is not specified for  <code>type</code> of <code>submit</code> or  <code>image</code>, substitute a localized version of the string "Submit" or "Submit Query"; if value is not specified for <code>type</code> of <code>reset</code>, substitute a localized version of the string "Reset".
+              </p>
+            </li>
+            <li>
+              <p>The associated <code>legend</code> or <code>label</code> element, for a <code>fieldset</code> element (legend) or a non-button <code>input</code> element, a <code>textarea</code> element, or other form element (label).</p>
+            </li>
+            <li>
+              <p>An associated <code>caption</code> or <code>figcaption</code> element, for a <code>table</code> or <code>figure</code>, respectively.</p>
+            </li>
+            <li>
+              <p>A <code>placeholder</code> attribute or an <code>aria-placeholder</code> attribute, for a non-button <code>input</code> element or a <code>textarea</code> element.</p>
+            </li>
+          </ol>
+          <p>
+            When computing an <a>accessible description</a>, the same text alternatives should be considered, in the same priority order, but any alternative that was used in the generation of the accessible name should be ignored.
+          </p>
+        </li>
+        <li id="step-element-contents">
+          <p>
+            <a class="accname" href="#step-element-contents">Step 6</a> is unchanged except for a <code>details</code> element in the closed state; for a closed <code>details</code> element, all child elements and child text nodes are omitted except for the associated <code>summary</code> element (and its child content) and any CSS-generated content on the <code>summary</code> or the <code>details</code> element itself.
+          </p>
+        </li>
+        <li id="step-element-tooltip">
+          <p>
+            In <a class="accname" href="#step-element-tooltip">Step 7</a>, the tooltip text is provided by the value of the <code>title</code> attribute, if present.
+          </p>
+        </li>
+      </ol>
+    </section>
+    <!--
     <section>
       <h3><code>input type="text"</code>, <code>input type="password"</code>,<code> input type="search"</code>,<code> input type="tel"</code>, <code>input type="url"</code> and <code>textarea</code> Element      </h3>
       <section>
@@ -6818,6 +6932,7 @@
       </ol>
     </section>
   </section>
+    -->
   </section>
   <section class="informative">
     <h2>Accessible Feature Implementation Examples</h2>
