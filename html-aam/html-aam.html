@@ -6561,31 +6561,19 @@
         The algorithm for determining the text alternative of an element, defined in the <a class="accname" href="#mapping_additional_nd_te_element">Text Alternative for an Element</a> section of the Accessible Name and Description: Computation and API Mappings 1.1 [[!ACCNAME-AAM]], should be applied using the following rules for the semantic features of HTML.
       </p>
       <ol>
-        <li id="step-element-hidden">
-          <p>
-            In <a class="accname" href="#step-element-hidden">Step 1</a>, a <a class="termref">hidden</a> element includes any of the following:
-          </p>
-          <ul>
-            <li>an element with a computed style of <code>display: none</code> for itself or any ancestor</li>
-            <li>an element with a computed style of <code>visibility: hidden</code></li>
-            <li>an element with a <code>hidden</code> attribute or an <code>aria-hidden="true"</code> attribute for itself or any ancestor</li>
-            <li>an <code>input</code> element of <code>type="hidden"</code></li>
-            <li>any child content of a <code>details</code> element that is in the closed state, other than the <code>summary</code> element and its child content</li>
-          </ul>
-        </li>
         <li id="step-element-ariaby">
           <p>
-            <a class="accname" href="#step-element-ariaby">Step 2</a> is unchanged.
+            <a class="accname" href="#step-element-ariaby">Step 1</a> is unchanged.
           </p>
         </li>
         <li id="step-element-embedded-control">
           <p>
-            In <a class="accname" href="#step-element-embedded-control">Step 3</a>, the current values of native input elements (for use as alternative text when embedded within a parent widget) are determined as follows:
+            In <a class="accname" href="#step-element-embedded-control">Step 2</a>, the current values of native widget elements (for use as alternative text when embedded as the contents of another element's alternative text) are determined as follows:
           </p>
           <ul>
             <li>
               <p>
-                For an <code>input</code> element (other than inputs whose <code>type</code> is <code>submit</code>, <code>reset</code>, <code>button</code>, <code>image</code>, or <code>hidden</code>, which would never be included in this step), use the first of these options that returns a non-empty string: 
+                For an <code>input</code> element <!--(other than inputs whose <code>type</code> is <code>submit</code>, <code>reset</code>, <code>button</code>, <code>image</code>, or <code>hidden</code>, which would never be included in this step)-->, use the first of these options that returns a non-empty string: 
               </p>
               <ol>
                 <li>the current <code>value</code> <abbr title="Document Object Model">DOM</abbr> property, </li>
@@ -6598,7 +6586,7 @@
             </li>
             <li>
               <p>
-                For a <code>textarea</code> elements, use the first of these options that returns a non-empty string: 
+                For a <code>textarea</code> element, use the first of these options that returns a non-empty string: 
               </p>
               <ol>
                 <li>the <code>innerText</code> content of the element, </li>
@@ -6607,6 +6595,16 @@
               </ol>
               <p>
                 If none of those returns a value, use the empty string.
+              </p>
+            </li>
+            <li>
+              <p>
+                For a <code>select</code> element, the current value is derived from the concatenated text alternatives of each descendent <code>option</code> element which currently has its <code>selected</code> flag set.  If no options are selected, use the empty string.
+              </p>
+            </li>
+            <li>
+              <p>
+                For a <code>progress</code>, <code>meter</code>, or <code>output</code> element, use the current <code>value</code> <abbr title="Document Object Model">DOM</abbr> property; if it is null, use the empty string.  (Note that these elements would normally be mapped to a <a class="core-mapping" href="#role-map-range"><code>range</code></a> role, and therefore <code>aria-valuetext</code> or <code>aria-valuenow</code> attributes take precedence over the current value provided by the native HTML semantics.)
               </p>
             </li>
           </ul>
@@ -6618,7 +6616,7 @@
         </li>
         <li id="step-element-native">
           <p>
-            In <a class="accname" href="#step-element-native">Step 5</a>, the following attributes and elements define a text alternative when computing an <a>accessible name</a>, in order of priority:
+            In <a class="accname" href="#step-element-native">Step 4</a>, the following attributes and elements define a text alternative when computing an <a>accessible name</a>, in order of priority:
           </p>
           <ol>
             <li>
@@ -6679,13 +6677,19 @@
           </p>
         </li>
         <li id="step-element-contents">
-          <p>
-            <a class="accname" href="#step-element-contents">Step 6</a> is unchanged except for a <code>details</code> element in the closed state; for a closed <code>details</code> element, all child elements and child text nodes are omitted except for the associated <code>summary</code> element (and its child content) and any CSS-generated content on the <code>summary</code> or the <code>details</code> element itself.
+          <p>In <a class="accname" href="#step-element-contents">Step 5</a>, a <a class="termref">hidden</a> node includes any of the following:
           </p>
+          <ul>
+            <li>an element with a computed style of <code>display: none</code> for itself or any ancestor</li>
+            <li>an element with a computed style of <code>visibility: hidden</code></li>
+            <li>an element with a <code>hidden</code> attribute or an <code>aria-hidden="true"</code> attribute for itself or any ancestor</li>
+            <li>an <code>input</code> element of <code>type="hidden"</code></li>
+            <li>any child content of a <code>details</code> element that is in the closed state, other than the <code>summary</code> element and its child content</li> and any CSS-generated content on the <code>summary</code> or the <code>details</code> element itself.
+          </ul>
         </li>
         <li id="step-element-tooltip">
           <p>
-            In <a class="accname" href="#step-element-tooltip">Step 7</a>, the tooltip text is provided by the value of the <code>title</code> attribute, if present.
+            In <a class="accname" href="#step-element-tooltip">Step 6</a>, the tooltip text is provided by the value of the <code>title</code> attribute, if present.
           </p>
         </li>
       </ol>

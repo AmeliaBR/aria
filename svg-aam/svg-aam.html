@@ -1984,34 +1984,24 @@ var mappingTableLabels = {
         The algorithm for determining the text alternative of an element, defined in the <a class="accname" href="#mapping_additional_nd_te_element">Text Alternative for an Element</a> section of the Accessible Name and Description: Computation and API Mappings 1.1 [[!ACCNAME-AAM]], should be applied using the following rules for the semantic features of HTML.
       </p>
       <ol>
-        <li id="step-element-hidden">
-          <p>
-            In <a class="accname" href="#step-element-hidden">Step 1</a>, a <a class="termref">hidden</a> element includes any of the following:
-          </p>
-          <ul>
-            <li>an element with a computed style of <code>display: none</code> for itself or any ancestor</li>
-            <li>an element that is neither visible nor interactive due to the interplay of the CSS <code>visibility</code>, <code>fill</code>, <code>stroke</code>, and <code>pointer-events</code> properties and the <code>tabindex</code> attribute, as defined in the sections <a href="#exclude_elements">Excluding Elements from the Accessibility Tree</a> and <a href="#include_elements">Including Elements in the Accessibility Tree</a> of this specification</li>
-            <li>an element with an <code>aria-hidden="true"</code> attribute for itself or any ancestor</li>
-          </ul>
-        </li>
         <li id="step-element-ariaby">
           <p>
-            <a class="accname" href="#step-element-ariaby">Step 2</a> is unchanged.
+            <a class="accname" href="#step-element-ariaby">Step 1</a> is unchanged.
           </p>
         </li>
         <li id="step-element-embedded-control">
           <p>
-            <a class="accname" href="#step-element-embedded-control">Step 3</a> is unchanged.
+            <a class="accname" href="#step-element-embedded-control">Step 2</a> is unchanged.
           </p>
         </li>
         <li id="step-element-label">
           <p>
-            <a class="accname" href="#step-element-label">Step 4</a> is unchanged. 
+            <a class="accname" href="#step-element-label">Step 3</a> is unchanged. 
           </p>
         </li>
         <li id="step-element-native">
           <p>
-            In <a class="accname" href="#step-element-native">Step 5</a>, when computing an <a>accessible name</a>, the text alternative element is a direct child <code>title</code> element, if present. If there is more than one such direct child element, the appropriate element is selected according to language attributes to best match the user's preferences, following <a href="http://www.w3.org/TR/SVG2/struct.html#DescriptionAndTitleElements">the rules in the SVG 2 specification</a> [[!SVG]].
+            In <a class="accname" href="#step-element-native">Step 4</a>, when computing an <a>accessible name</a>, the text alternative element is a direct child <code>title</code> element, if present. If there is more than one such direct child element, the appropriate element is selected according to language attributes to best match the user's preferences, following <a href="http://www.w3.org/TR/SVG2/struct.html#DescriptionAndTitleElements">the rules in the SVG 2 specification</a> [[!SVG]].
           </p>
           <p>
             When computing an <a>accessible description</a>, the text alternative element is a direct child <code>desc</code> element, if present, selected according to the language rules for SVG 2.
@@ -2024,15 +2014,23 @@ var mappingTableLabels = {
         </li>
         <li id="step-element-contents">
           <p>
-            In <a class="accname" href="#step-element-contents">Step 6</a>, child text nodes and CSS-generated content nodes are only considered if the <code>current node</code> is a text-container element (<code>text</code>, <code>tspan</code>, or <code>textPath</code>), a metadata or alternative text element (<code>metadata</code>, <code>title</code>, or <code>desc</code>), or the descendent content of a metadata or alternative text element; otherwise, the alternative text is generated from child elements only.
+            In <a class="accname" href="#step-element-contents">Step 5</a>, a <a class="termref">hidden</a> node includes any of the following:
           </p>
+          <ul>
+            <li>an element with a computed style of <code>display: none</code> for itself or any ancestor</li>
+            <li>an element that is never rendered, regardless of its <code>display</code> property,  as described in the sections <a href="#exclude_elements">Excluding Elements from the Accessibility Tree</a>; this includes the <code>title</code> and <code>desc</code> elements and any other element with "no role may be applied" in the <a href="#role-mapping-table">role mapping table</a></li>
+            <li>an element that is neither visible nor interactive due to the interplay of the CSS <code>visibility</code>, <code>fill</code>, <code>stroke</code>, and <code>pointer-events</code> properties and the <code>tabindex</code> attribute, as defined in the sections <a href="#exclude_elements">Excluding Elements from the Accessibility Tree</a> and <a href="#include_elements">Including Elements in the Accessibility Tree</a> of this specification</li>
+            <li>an element with an <code>aria-hidden="true"</code> attribute for itself or any ancestor</li>
+            <li>any child text nodes and CSS-generated content nodes <strong>unless</strong> the <code>current node</code> is a text-container element (<code>text</code>, <code>tspan</code>, or <code>textPath</code>)
+          </ul>
+        </li>
           <p>
-            The <code>tspan</code> and <code>textPath</code> elements are always considered to be displayed inline, regardless of presentation on screen or value of the <code>display</code> property.  The <code>text</code> element and all other SVG elements are always considered to be displayed block (i.e., spaces are inserted before and after the compiled alternative text).  Elements in other namespaces (e.g., HTML or MathML elements that are included as child content of SVG metadata or alternative text elements) are either inline or block display according to the rules of that language or the CSS <code>display</code> property.
+            For <a class="accname" href="#step-element-contents-whitespace">Step 5D</a>, the <code>tspan</code> and <code>textPath</code> elements are always considered to be displayed inline, regardless of text positioning attributes or the value of the <code>display</code> property.  The <code>text</code> element and all other SVG elements are always considered to be displayed block (i.e., spaces are inserted before and after the compiled alternative text).  Elements in other namespaces (e.g., HTML or MathML elements that are included as child content of SVG <code>foreignObject</code>, <code>metadata</code>, or alternative text elements) are either inline or block display according to the rules of that language or the CSS <code>display</code> property.
           </p>
         </li>
         <li id="step-element-tooltip">
           <p>
-            In <a class="accname" href="#step-element-tooltip">Step 7</a>, the tooltip text is provided by the value of the direct child <code>title</code> element, if present, selected according to the language rules from SVG 2. For link (<code>a</code>) elements only, the <code>xlink:title</code> attribute is an alternative source of tooltip text, if no <code>title</code> element is present.
+            In <a class="accname" href="#step-element-tooltip">Step 6</a>, the tooltip text is provided by the value of the direct child <code>title</code> element, if present, selected according to the language rules from SVG 2. For link (<code>a</code>) elements only, the <code>xlink:title</code> attribute is an alternative source of tooltip text, if no <code>title</code> element is present.
           </p>
         </li>
       </ol>

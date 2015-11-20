@@ -231,7 +231,7 @@
       <dt>contents</dt>
       <dd>name is generated from the <a class="termref" data-lt="text node">text nodes</a> and child elements associated with the <a class="termref">element</a>. Although this may be allowed in addition to "author" in some <a class="termref">roles</a>, "content" is used only if higher priority "author" features are not provided. Priority is defined by the <a href="#mapping_additional_nd_te">text alternative computation</a> algorithm.</dd>
     </dl>
-    <p class="ednote">(Joseph) Need links into ARIA spec to (1) a list of nameFrom:author roles, and (2) a list of nameFrom:contents roles.  Reference these at step 6 of the text alternative for an element algorithm. </p>
+    <p class="ednote">(Joseph) Need links into ARIA spec to (1) a list of nameFrom:author roles, and (2) a list of nameFrom:contents roles.  Reference these at step 5 of the text alternative for an element algorithm. </p>
     <p>
   </section>
   <section id="mapping_additional_nd_description">
@@ -276,26 +276,25 @@
       <h4>Text Alternative for an Element</h4>
       <p>The text alternative for a DOM element is computed as follows:</p>
         <ol>
-          <li id="step-element-hidden">If the <code>current node</code> is the <code>original node</code> or a <code>content node</code>, and it is <a class="termref">hidden</a>, return the empty string.  If the <code>current node</code> is <code>content of a labelling node</code>, and the ancestor <code>labelling node</code> <strong>is not</strong> hidden, but the <code>current node</code> <strong>is</strong> hidden, return the empty string.
-            <div><details>
-              <summary>Comment:</summary>
-              <p>By default, <a class="termref">assistive technologies</a> do not relay hidden information, but an author can explicitly override that and include hidden text as part of the <a class="termref">accessible name</a> or <a class="termref">accessible description</a> by using <code>aria-labelledby</code> or <code>aria-describedby</code>, or other host language labelling mechanisms. </p>
-            </details></div>
-            <p class="ednote">
-              The distinction for content of a labelling node ensures that hidden labelling elements work as intended (even though their child content is also hidden), but visible labelling elements only use visible content.
-            </p>
-          </li>
           <li id="step-element-ariaby">
-            Otherwise, if the <code>current node</code> is the <code>original node</code> or a <code>content node</code>, <strong>and</strong> it has a non-empty <code>aria-labelledby</code> <a class="termref">attribute</a> (if computing a <a class="termref" data-lt="accessible name">name</a>) or <code>aria-describedby</code> <a class="termref">attribute</a> (if computing a <a class="termref" data-lt="accessible description">description</a>):
+            If the <code>current node</code> is the <code>original node</code> or a <code>content node</code>, <strong>and</strong> it has a non-empty <code>aria-labelledby</code> <a class="termref">attribute</a> (if computing a <a class="termref" data-lt="accessible name">name</a>) or <code>aria-describedby</code> <a class="termref">attribute</a> (if computing a <a class="termref" data-lt="accessible description">description</a>):
             <ol>
-              <li id="step-element-ariaby-recurse">For each token in the relevant attribute, in the order they are specified, if
+              <li id="step-element-ariaby-recurse">
+                <p>
+                  For each token in the relevant attribute, in the order they are specified, if
+                </p>
                 <ul>
                   <li>that token is a <a>valid IDREF</a> referencing an element in the document, <strong>and</strong></li>
                   <li>the referenced element is <strong>either</strong> the <code>current node</code> or it is another element that has <strong>not</strong> been previously processed in the course of generating the alternative text for the <code>original node</code>,</li>
                 </ul>
-                then generate a text alternative for the referenced element using this <a href="#mapping_additional_nd_te_element">Text Alternative for an Element</a> algorithm, with the referenced element as the <code>current node</code> and as a <code>labelling node</code>.
+                <p>
+                  then generate a text alternative for the referenced element using this <a href="#mapping_additional_nd_te_element">Text Alternative for an Element</a> algorithm, with the referenced element as the <code>current node</code> and as a <code>labelling node</code>.
+                </p>
               </li>
-              <li id="step-element-ariaby-join">Concatenate the returned text alternatives, separated by spaces, in the order that the IDREFs were specified in the <code>aria-labelledby</code> or <code>aria-describedby</code> attribute, and return the resulting string.
+              <li id="step-element-ariaby-join">
+                <p>
+                  Concatenate the returned text alternatives, separated by spaces, in the order that the IDREFs were specified in the <code>aria-labelledby</code> or <code>aria-describedby</code> attribute, and return the resulting string.
+                </p>
               </li>
             </ol>
             <div><details>
@@ -319,20 +318,27 @@
               </pre>
             </details></div>
             <p class="ednote">
-              The requirement to avoid repeated content was previously included in the step for concatenating child content; it seemed to make more sense here.
+              (Amelia) The requirement to avoid repeated content was previously only mentioned in the step for concatenating child content; it seemed appropriate to also express it here.
             </p>
           </li>
-          <li id="step-element-embedded-control">Otherwise, if the <code>current node</code> is a <code>content node</code> or <code>content of a labelling node</code> <strong>and</strong> the <code>current node</code>'s computed role is an <a class="role-reference" href="#input">input</a> or a <a class="role-reference" href="#range">range</a> (or a subclass thereof), then return the current value of the input, as follows:
+          <li id="step-element-embedded-control">
+            Otherwise, if the <code>current node</code> is a <code>content node</code> or <code>content of a labelling node</code> <strong>and</strong> the <code>current node</code>'s computed role is an <a class="role-reference" href="#input">input</a> or a <a class="role-reference" href="#range">range</a> (or a subclass thereof), then return the current value of the input, as follows:
             <ul>
-              <li>
-                If the embedded control has role <a class="role-reference" href="#textbox">textbox</a>, return its current value.
+              <li id="step-element-embedded-control-textbox">
+                <p>
+                  If the embedded control has role <a class="role-reference" href="#textbox">textbox</a>, return its current value as determined by host language features, if they exist, or else determine its text alternative from its contents by following the process in <a href="step-element-contents">Step 5</a>.
+                </p>
               </li>
               <!--<li>If the embedded control has role menu <a class="role-reference" href="#button">button</a>, return the text alternative of the button.</li>-->
-              <li>
-                If the embedded control has a <a class="role-reference" href="#combobox">select</a> role (e.g., <rref>listbox</rref> or <rref>combobox</rref>), return the text alternative of the chosen <a class="role-reference" href="#option">option</a> or the current user-input text value.
+              <li id="step-element-embedded-control-select">
+                <p>
+                  If the embedded control has a <a class="role-reference" href="#combobox">select</a> role (e.g., <rref>listbox</rref> or <rref>combobox</rref>), determine text alternatives for the current user-input text value (via host language semantics for the selection element or as the current value of the first descendent element with a <a class="role-reference" href="#textbox">textbox</a> role) and any selected descendent <a class="role-reference" href="#option">option</a> elements (determined via host language semantics or via running this algorithm on option elements with the <code>aria-selected="true"</code> state).  Return these values, concatenated in order, separated by spaces.
+                </p>
               </li>
-              <li>
-                If the embedded control has a <a class="role-reference" href="#range">range</a> role (e.g., a <a class="role-reference" href="#spinbutton">spinbutton</a> or <a class="role-reference" href="#slider">slider</a>):
+              <li id="step-element-embedded-control-range">
+                <p>
+                  If the embedded control has a <a class="role-reference" href="#range">range</a> role (e.g., a <a class="role-reference" href="#spinbutton">spinbutton</a> or <a class="role-reference" href="#slider">slider</a>):
+                </p>
                 <ul>
                   <li>If the <code>aria-valuetext</code> property is present, return its value, </li>
                   <li>Otherwise, if the <code>aria-valuenow</code> property is present, return its value,</li>
@@ -346,7 +352,7 @@
               <pre class="example highlight"><code>&lt;div role="checkbox" aria-checked="false" &gt;Remind me in &lt;span role="textbox" aria-multiline="false" contenteditable="true"&gt; 5 &lt;/span&gt; minutes&lt;/div&gt;</code></pre>
             </details></div>
             <p class="ednote">
-              (Amelia) The term "current value" for a text box is under-specified. A custom text box or HTML <code>textarea</code> will likely use the text content as the current value.  An HTML <code>input</code> element of type <code>text</code> uses an IDL property to hold the current value, and can also have a placeholder value which appears in the text box when the current value is empty.
+              (Amelia) The "current value" for custom widgets is normally represented with plain text content of component elements, but may also be represented with CSS generated content tied to a data attribute.  Native widgets represent the value with special properties; for example, an HTML <code>input</code> element of type <code>text</code> uses an IDL property to hold the current value, and can also have a placeholder value which appears in the text box when the current value is empty.  The current wording tries to incorporate all the possibilities; it will be complemented by specifics in the HTML-AAM specification.
             </p>
             <p class="ednote">
               (Amelia) Various changes have been made to the original text (which stems from ARIA 1.0), to reference the abstract superclass roles wherever appropriate.  I have also removed any mention of a "selected menuitem" within a menu as an example of a user-input widget with a changeable value.  It's inclusion did not seem to be consistent with the concept of menus as a collection of distinct commands (rather than as a selection).
@@ -383,28 +389,97 @@
                 For example, in <abbr title="Hypertext Markup Language">HTML</abbr>, the <code>img</code> element's <code>alt</code> attribute defines a text alternative string, and the <code>label</code> element provides text for the referenced form element.  In <abbr title="Scalable Vector Graphics">SVG</abbr>, the <code>desc</code> and <code>title</code> elements provide a description and a label, respectively, for their parent element. 
               </p>
             </details></div>
-          <li id="step-element-contents">Otherwise, if the <code>current node</code> is <strong>not</strong> the <code>original node</code>, <strong>or</strong> if the <code>current node's</code> <a class="termref">role</a> allows "Name From: contents":
+          <li id="step-element-contents">Otherwise, if the <code>current node</code> is <strong>not</strong> the <code>original node</code>, <strong>or</strong> if computing an <a>accessible name</a> and the <code>current node</code>'s computed <a class="termref">role</a> allows "Name From: contents":
             <ol>
-              <li>Follow the <a href="#mapping_additional_nd_te_css-insert">algorithm for inserting <abbr title="Cascading Style Sheets">CSS</abbr>-generated text nodes</a> for the <code>current node</code> into its child content.
+              <li id="step-element-contents-css">
+                <p>
+                Follow the <a href="#mapping_additional_nd_te_css-insert">algorithm for inserting <abbr title="Cascading Style Sheets">CSS</abbr>-generated text nodes</a> for the <code>current node</code> into its child content.
+                </p>
               </li>
-              <li>For each child node of the <code>current node</code>, in order&mdash;including child elements, DOM text nodes (even if only containing whitespace), and the inserted CSS-generated text nodes&mdash;calculate a text alternative by running the appropriate algorithm with the node as a <code>content node</code> (if the <code>current node</code> is the <code>original node</code> or a <code>content node</code>) or as <code>content of labelling node</code> (if the <code>current node</code> is a <code>labelling node</code> or <code>content of labelling node</code>).
+              <li id="step-element-contents-hidden">
+                <p>
+                  Exclude all child nodes of the <code>current node</code> that are <a class="termref">hidden</a>,
+                  <strong>unless</strong> the <code>current node</code> is <strong>also</strong> hidden itself.
+                </p>
               </li>
-              <li>Concatenate the text alternatives of the child content, in order. If the <code>current node</code> is displayed (or would be displayed in visual media) with a line break before and after its content (e.g., <abbr title="Cascading Style Sheets">CSS</abbr> <code>block</code> or <code>list-item</code> display modes), append a space before and after the concatenated content; do not append spaces if the element is displayed inline.  Return the concatenated string as the text alternative for the <code>current node</code>.
+              <li id="step-element-contents-children">
+                <p>
+                  For each remaining child node of the <code>current node</code>, in order&mdash;including child elements, DOM text nodes (even if only containing whitespace), and the inserted CSS-generated text nodes&mdash;calculate a text alternative by running the appropriate algorithm with the node as a <code>content node</code> (if the <code>current node</code> is the <code>original node</code> or a <code>content node</code>) or as <code>content of labelling node</code> (if the <code>current node</code> is a <code>labelling node</code> or <code>content of labelling node</code>).
+                </p>
+                <p>
+                  Before processing each child element, determine whether that element has been previously processed by this algorithm in the course of generating the text alternative for the <code>original node</code>.  If it has, do not process the element a second time, but instead treat it as a hidden node.
+                </p>
+              </li>
+              <li id="step-element-contents-whitespace">
+                <p>
+                  Concatenate the text alternatives of the child content, in order. If the <code>current node</code> is displayed (or would be displayed in visual media) with a line break before and after its content (e.g., <abbr title="Cascading Style Sheets">CSS</abbr> <code>block</code> or <code>list-item</code> display modes), append a space before and after the concatenated content; do not append spaces if the element is displayed inline.  Return the concatenated string as the text alternative for the <code>current node</code>.
+                </p>
               </li>
             </ol>
             <div><details>
-              <summary>Comment and Example:</summary>
+              <summary>Comment and Examples:</summary>
               <p>
-                This step can apply recursively to child elements, resulting in text collected from all the elements in the <code>current node</code>'s subtree, no matter how deep it is. However, any given descendant <a class="termref">element</a>'s text alternative may result from higher precedent markup provided by the author attributes provide the text alternative for the entire subtree. 
+                This step can apply recursively to child elements, resulting in text collected from all the elements in the <code>current node</code>'s subtree, no matter how deep it is. However, any given descendant <a class="termref">element</a>'s text alternative may result from explicit labelling markup provided by the author, instead of from its subtree. 
+              </p>
+              <p>
+                Because it is a recursive algorithm, there is a potential for infinite loops. For this reason, both this step and <a href="step-element-ariaby">Step 1</a> require user agents to determine whether they have already processed a given element before processing it a second time. The following snippet of an HTML form shows two cases where this check prevents a loop:
+              </p>
+<pre class="example highlight"><code>&lt;label&gt;&lt;input type="number" name="count" min="0" required /&gt; 
+  Number of copies 
+  &lt;span&gt;(required)&lt;/span&gt;&lt;/label&gt;
+&lt;button type="submit"&gt;
+  &lt;img src="shopping-cart.svg" aria-labelledby="cart-label" /&gt; 
+  &lt;span id="cart-label"&gt;Add to Cart&lt;/span&gt;
+&lt;/button&gt;
+</code></pre>
+              <p>
+                The accessible name for the <code>input</code> element is derived from it's containing <code>label</code>, 
+                according to the native semantics of HTML.  
+                The label has no special attributes defining a name, 
+                so its text alternative will be derived from its contents.  
+                The first of those content nodes is the <code>input</code> element itself, 
+                but that will be skipped because it has already been processed.  
+                The text node and span that form the rest of the label contents will therefore be used for the input's name.
+              </p>
+              <p>
+                If CSS is used to hide the "(required)" text once the input has a valid value,
+                then that node will be excluded from the contents and therefore the name.
+                By default, <a class="termref">assistive technologies</a> do not relay hidden information, 
+                although an author can explicitly override that 
+                and include hidden text as part of the <a class="termref">accessible name</a> or <a class="termref">accessible description</a> 
+                by using <code>aria-labelledby</code> or <code>aria-describedby</code>, or other host language labelling mechanisms.  
+                A hidden labelling node will be used, as will its contents if required.
+              </p>
+              <p>
+                The submit button in the code snippet does not have any labelling attributes or elements. 
+                The button's name will therefore be derived from its contents, 
+                consistent with the <code>button</code> <a>role</a>.
+                The first content element (after a whitespace node) is an icon <code>img</code>, 
+                which is labelled "Add to Cart" by an adjacent <code>span</code>.  
+                The <code>span</code> is also a child of the <code>button</code>; 
+                however, it is not processed a second time because of the check in this step against duplicate contents.  
+                If the <code>span</code> had been before the <code>img</code> in the markup, 
+                the check at <a href="step-element-ariaby">Step 1</a> would have prevented the duplication, 
+                prior to processing the icon's <code>aria-labelledby</code> attribute.  
+                Either way, the button's accessible name would be simply the string "Add to Cart".  
+              </p>
+              <p>
+                On smaller screen sizes, the visible text button label may be hidden,
+                so the button's only visible content is the icon.
+                In that case, the label will be omitted from the button's contents,
+                but it's text will still be used as alternative text for the icon.
               </p>
               <p>
                 The requirement to insert whitespace before and after the content string, conditional upon the element's display mode, reflects the implied word breaks created by block styling, without introducing inappropriate word breaks within inline content.  In the following snippet, the accessible name for the checkbox would be "Make this the topmost element" (with no space after "top"), but the accessible names for both buttons would be "Top it Up"&mdash;in the first case because of the explicit whitespace nodes, but in the second case because of the implicit formatting breaks (assuming the normal block styling of <code>p</code> elements in HTML was not altered).
               </p>
-<pre class="example highlight"><code>&lt;label&gt; &lt;input type="checkbox"&gt; Make this the &lt;em&gt;top&lt;/em&gt;most element&lt;/label&gt;
+<pre class="example highlight"><code>&lt;label&gt; &lt;input type="checkbox" /&gt; Make this the &lt;em&gt;top&lt;/em&gt;most element&lt;/label&gt;
 &lt;button&gt;&lt;em&gt;Top&lt;/em&gt; &lt;em&gt;it&lt;/em&gt; &lt;em&gt;Up&lt;/em&gt;&lt;/button&gt;
 &lt;button&gt;&lt;p&gt;Top&lt;/p&gt;&lt;p&gt;it&lt;/p&gt;&lt;p&gt;Up&lt;/p&gt;&lt;/button&gt;
 </code></pre>
             </details></div>
+            <p class="ednote">
+              The check for hidden content has been moved here, instead of as the first step of the element algorithm, because it only applies when dealing with contents, not labelling nodes, and because we need to ensure that an element that is skipped (as contents) because it is hidden will <strong>not</strong> be skipped again (as a duplicate) if it is referenced in a labelling relationship.  Putting the test at this point in the algorithm also helps deal with the HTML <code>details</code> element and arbitrary text in SVG files, for which text nodes may be hidden even though their parent element is displayed.  The check for whether the current node is also hidden allows hidden labelling nodes to work as expected (even though their contents would be hidden as well).
+            </p>
           </li>
           <li id="step-element-tooltip">
             Otherwise, if host language features provide content for the <code>current node</code> that is normally displayed as a tooltip, return the tooltip's text value as a flat string, padded before and after with spaces. 
@@ -462,12 +537,12 @@
       </li>
       <li>
         <p>
-          If the <code>current node</code> has a <code>before</code> pseudo-element whose <code>content</code> property is not <code>normal</code>, a corresponding pseudo-element node should be inserted <strong>after</strong> any list marker node but <strong>before</strong> any child content (including text nodes) in the <abbr title="document object model">DOM</abbr>.
+          If the <code>current node</code> has a <code>before</code> pseudo-element whose <code>content</code> property is not <code>normal</code> and whose <code>display</code> property is not <code>none</code>, a corresponding pseudo-element node should be inserted <strong>after</strong> any list marker node but <strong>before</strong> any child content (including text nodes) in the <abbr title="document object model">DOM</abbr>.
         </p>
       </li>
       <li>
         <p>
-          If the <code>current node</code> has an <code>after</code> pseudo-element whose <code>content</code> property is not <code>normal</code>, a corresponding pseudo-element node should be inserted <strong>after</strong> any child content (including text nodes) in the <abbr title="document object model">DOM</abbr>.
+          If the <code>current node</code> has an <code>after</code> pseudo-element whose <code>content</code> property is not <code>normal</code> and whose <code>display</code> property is not <code>none</code>, a corresponding pseudo-element node should be inserted <strong>after</strong> any child content (including text nodes) in the <abbr title="document object model">DOM</abbr>.
         </p>
       </li>
     </ul>
@@ -593,7 +668,7 @@
     <ul>
       <li>Buttons such as the "Play" button in a media player whose label can switch between "Pause" and "Play" depending on its state. </li>
       <li>On/Off switches whose label changes between "On" and "Off". </li>
-      <li>Labels with embedded controls as described in <a href="#step-element-embedded-control">step 3 of the text alternative algorithm for an element</a>, since the user can change the value of the embedded control. </li>
+      <li>Labels with embedded controls as described in <a href="#step-element-embedded-control">step 2 of the text alternative algorithm for an element</a>, since the user can change the value of the embedded control. </li>
       <li>Situations where description text is loaded or set only when needed, such as when the mouse hovers over an object, or the object gains focus. </li>
     </ul>
     <p>The following table lists the events or notifications provided by Accessibility <abbr title="Application Programming Interfaces">APIs</abbr> if the name or description changes. <a class="termref">Assistive technologies</a> can make use of these events to provide the current label as needed. </p>
