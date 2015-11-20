@@ -245,14 +245,17 @@
     <ul>
       <li>An <a class="property-reference" href="#aria-describedby"><code>aria-describedby</code></a> attribute was provided for that element.</li>
       <li>A labelling relationship has been provided using host language features, other than a labelling relationship that was used to generate the accessible name.</li>
-      <li>Alternative text or tooltip text was provided using host language features, and this was not used to generate the accessible name.</li>
+      <li>Alternative text or tooltip text was provided using host language features.</li>
     </ul>
     <p>
       The text description is generated following the methods outlined in the section titled <a href="#mapping_additional_nd_te">Text Alternative Computation</a>. 
       In the absence of explicit labelling relationships or tooltip elements, descriptions are not generated from an element's contents.
     </p>
+    <p>
+      After computing both the accessible name and the accessible description for the element according to the algorithm (including whitespace normalization), user agents MUST compare the two.  If the entirety of the description is contained within the name, then there is no accessible description for the element.
+    </p>
     <p class="ednote">
-      (Amelia) The requirements for generating an accessible description have been extended to include host-language features as well as <code>aria-describedby</code>.  I'm not sure if user agents currently compute descriptions in all these cases; that may be an argument for making some of these points SHOULD instead of MUST.
+      (Amelia) The requirements for generating an accessible description have been extended to include host-language features as well as <code>aria-describedby</code>.  I'm not sure if user agents currently compute descriptions in all these cases; that may be an argument for making some of these points SHOULD instead of MUST.  The requirement to compare the name and description, and drop redundant descriptions, replaces step-by-step requirements to check whether a given text alternative has already been used.
     </p>
   </section>
   <section id="mapping_additional_nd_te">
@@ -389,7 +392,6 @@
               <li>Concatenate the text alternatives of the child content, in order. If the <code>current node</code> is displayed (or would be displayed in visual media) with a line break before and after its content (e.g., <abbr title="Cascading Style Sheets">CSS</abbr> <code>block</code> or <code>list-item</code> display modes), append a space before and after the concatenated content; do not append spaces if the element is displayed inline.  Return the concatenated string as the text alternative for the <code>current node</code>.
               </li>
             </ol>
-            
             <div><details>
               <summary>Comment and Example:</summary>
               <p>
@@ -405,15 +407,35 @@
             </details></div>
           </li>
           <li id="step-element-tooltip">
-            Otherwise, if host language features provide content for the <code>current node</code> that is normally displayed as a tooltip, return the tooltip's text value as a flat string.  If computing an accessible description, only return the tooltip text if it was not used to generate the accessible name (otherwise, there is no accessible description).
+            Otherwise, if host language features provide content for the <code>current node</code> that is normally displayed as a tooltip, return the tooltip's text value as a flat string, padded before and after with spaces. 
               <p class="ednote">
-                (Amelia) The use of tooltips as descriptions is something we've discussed for the SVG accessibility mappings.  Tooltips can be important text content that the author provided to pointer users, and it would ideally therefore be accessible to AT users.  However, it is additional content, that should not replace the visible text content or proper label.  I have also changed the wording from "tooltip attribute" to allow for other host language features (i.e., the <code>title</code> child element in SVG).
+                (Amelia)  The tooltip may therefore end up as the accessible name or as the accessible description, depending on what other alternative text is provided.  The check against duplicate description content prevents it from being both. The use of tooltips as descriptions is something we've discussed for the SVG accessibility mappings.  Tooltips can be important text content that the author provided to pointer users, and it would ideally therefore be accessible to AT users.  However, it is additional content, that should not replace the visible text content or proper label.  I have also changed the wording from "tooltip attribute" to allow for other host language features (i.e., the <code>title</code> child element in SVG).
               </p>
             <div><details>
-              <summary>Comment:</summary>
+              <summary>Comment and Example:</summary>
               <p>
                 Tooltip are only used as an accessible name if no other labelling mechanism has been provided, and the element's role does not support names from content.  Because tooltips are usually written as supplemental information for users of visual displays and pointer input, they are more suitable as additional descriptions rather than as labels or alternative text.
               </p>
+              <p>
+                If the tooltip content should be presented in addition to a more detailed description, the <code>aria-describedby</code> attribute can be used to reference the existing element (and its tooltip) in addition to another element (with a full description).  For example, when a tooltip is used to provide an extra punchline to a visual joke, it should be appended to a description of the graphical content, as in the following example:
+              </p>
+<pre class="example highlight"><code>&lt;img id="image" src="sleepy-kitty.jpg" 
+    aria-describedby="description image"
+    alt="I hate Mondays"
+    title="also applies to Tuesdays, Wednesdays, Thursdays, and Fridays" /&gt;
+&lt;p id="description" class="off-screen"&gt;
+  Photograph of a messy bed, with a cat-sized lump under the blankets and a cat's tail peeking out.
+  Text says 'I hate Mondays…'.
+&lt;/p&gt;
+</code></pre>
+              <p>The graphic would have the accessible name "I hate Mondays",
+                based on the native alternative text attribute (<code>alt</code>) for the HTML <code>img</code> element.
+                The accessible description, concatenated from the description paragraph and the tooltip defined by the HTML <code>title</code> attribute,  would be:
+              </p>
+              <blockquote>
+                Photograph of a messy bed, with a cat-sized lump under the blankets and a cat's tail peeking out.
+  Text says 'I hate Mondays…'. also applies to Tuesdays, Wednesdays, Thursdays, and Fridays
+              </blockquote>
             </details></div>
           </li>
         </ol>
@@ -431,14 +453,24 @@
     
     <p>
       When generating alternative text from the content of an element, the computations should proceed as if text nodes existed in the DOM tree for CSS-generated content, as follows:
-      <ul>
-        <li>If the <code>current node</code> is a list element (those for which the computed value of <abbr title="Cascading Style Sheets">CSS</abbr> <a href="http://www.w3.org/TR/CSS2/generate.html#propdef-list-style-type"><code>list-style-type</code></a> is not <code>"none"</code>), a list marker node should be inserted <strong>before</strong> any child content (including text nodes) in the <abbr title="document object model">DOM</abbr>.</li>
-        <li>If the <code>current node</code> has a <code>before</code> pseudo-element whose <code>content</code> property is not <code>normal</code>, a corresponding pseudo-element node should be inserted <strong>after</strong> any list marker node but <strong>before</strong> any child content (including text nodes) in the <abbr title="document object model">DOM</abbr>.
-        </li>
-        <li>If the <code>current node</code> has an <code>after</code> pseudo-element whose <code>content</code> property is not <code>normal</code>, a corresponding pseudo-element node should be inserted <strong>after</strong> any child content (including text nodes) in the <abbr title="document object model">DOM</abbr>.
-        </li>
-      </ul>
     </p>
+    <ul>
+      <li>
+        <p>
+          If the <code>current node</code> is a list element (those for which the computed value of either the <a href="http://www.w3.org/TR/CSS2/generate.html#propdef-list-style-type"><code>list-style-type</code></a> or <a href="http://www.w3.org/TR/CSS2/generate.html#propdef-list-style-image"><code>list-style-image</code></a> <abbr title="Cascading Style Sheets">CSS</abbr> properties is something other than <code>none</code>), a list marker node should be inserted <strong>before</strong> any child content (including text nodes) in the <abbr title="document object model">DOM</abbr>.
+        </p>
+      </li>
+      <li>
+        <p>
+          If the <code>current node</code> has a <code>before</code> pseudo-element whose <code>content</code> property is not <code>normal</code>, a corresponding pseudo-element node should be inserted <strong>after</strong> any list marker node but <strong>before</strong> any child content (including text nodes) in the <abbr title="document object model">DOM</abbr>.
+        </p>
+      </li>
+      <li>
+        <p>
+          If the <code>current node</code> has an <code>after</code> pseudo-element whose <code>content</code> property is not <code>normal</code>, a corresponding pseudo-element node should be inserted <strong>after</strong> any child content (including text nodes) in the <abbr title="document object model">DOM</abbr>.
+        </p>
+      </li>
+    </ul>
   </section>
   <section id="mapping_additional_nd_te_css-alt">
     <h4>Text Alternative for CSS-Generated Content</h4>
@@ -447,10 +479,26 @@
     </p>
     <ul>
       <li>
-        For list marker nodes, return the text characters (e.g., bullets, numbers, or letters) generated for the list marker, including any suffixes or prefixes, padded on either side by spaces.  If the list markers use a counter system for which a <a href="http://www.w3.org/TR/css-counter-styles-3/#counter-style-speak-as"><code>speak-as</code> descriptor</a> has been declared, instead use the text that would be generated for the spoken representation of the marker.
+        <p>
+          For list marker nodes, return text equivalent to the <a href="http://www.w3.org/TR/css-counter-styles-3/#counter-style-speak-as"><code>speak-as</code></a> value defined for the list counter system as described in CSS Counter Styles Level 3 [[CSS-COUNTER-STYLES-3]].  If the user agent does not support <code>speak-as</code>, the following rules should be used:
+        </p>
+        <ul>
+          <li>
+            When <code>list-style-image</code> is not <code>none</code>, or when <code>list-style-type</code> is <code>disc</code>, <code>circle</code>, or <code>square</code>, use a standard user agent representation of a bullet, such as the character U+2022 (&#x2022;).
+          </li>
+          <li>
+            For all other <code>list-style-type</code> values, use the actual text characters created for the marker.
+          </li>
+        </ul>
+        </p>
+          In all cases, the list marker is padded before and after with spaces.  
+        </p>
       </li>
-      <li>For pseudo-element nodes, 
-        <ol>
+      <li>
+        <p>
+          For pseudo-element nodes, 
+        </p>
+        <ul>
           <li>
             If the pseudo-element has a property that defines alternative text content, use that alternative text content converted to a flat string.  
           </li>
@@ -460,16 +508,20 @@
           <li>
             If the pseudo-element's content consists only of an image or an empty string, and no alternative text is provided, return an empty string.
           </li>
-        </ol>
-        If the result of the above steps is not an empty string, and the pseudo-element node is displayed with a line break before and after its content (e.g., <abbr title="Cascading Style Sheets">CSS</abbr> <code>block</code> display mode), append a space before and after the text; do not append a space if the element is displayed inline.  Return the resulting string as the text alternative for the node.
+        </ul>
+        <p>
+          If the result of the above steps is not an empty string, and the pseudo-element node is displayed with a line break before and after its content (e.g., <abbr title="Cascading Style Sheets">CSS</abbr> <code>block</code> display mode), append a space before and after the text; do not append a space if the element is displayed inline.  Return the resulting string as the text alternative for the node.
+        </p>
       </li>
     </ul>
-    <p>
-      Custom counter styles and the <a href="http://www.w3.org/TR/css-counter-styles-3/#counter-style-speak-as"><code>speak-as</code> descriptor</a> were introduced in CSS Counter Styles Level 3 [[CSS-COUNTER-STYLES-3]].  They provide a way for decorative characters (e.g., circled numbers: ❶, ❷, ❸) to be replaced with a simpler alternative (e.g., regular numbers: 1, 2, 3) for speech rendering or other plain text presentations.
-    </p>
-    <p>
-      The wording regarding alternative text for CSS-generated content is intentionally open-ended, as <a href="https://drafts.csswg.org/css-content/#alt-property">proposals for this feature in CSS are still in the early draft stage</a>.
-    </p>
+    <div class="note">
+      <p>
+        CSS Counter Styles Level 3 introduced custom counter styles and the <a href="http://www.w3.org/TR/css-counter-styles-3/#counter-style-speak-as"><code>speak-as</code> descriptor</a>.  The <code>speak-as</code> option provides a way for decorative characters (e.g., circled numbers: ❶, ❷, ❸) to be replaced with a simpler alternative (e.g., regular numbers: 1, 2, 3) for speech rendering or other plain text presentations [[CSS-COUNTER-STYLES-3]].
+      </p>
+      <p>
+        The wording regarding alternative text for CSS-generated content is intentionally open-ended, as <a href="https://drafts.csswg.org/css-content/#alt-property">proposals for this feature in CSS are still in the early draft stage</a>.
+      </p>
+    </div>
     <p class="ednote">
       The information regarding alternative text for CSS-generated content is new.  In addition, I have simplified the rules for list markers to always add whitespace, without needing to check whether the marker already includes a space or not; the whitespace normalization rules for "flat strings" should take care of duplicate consecutive spaces.  For pseudo-elements, however, I've added in the check for inline versus block content, with whitespace adjusted accordingly.
     </p>

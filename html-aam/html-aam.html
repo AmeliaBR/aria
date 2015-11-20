@@ -6622,25 +6622,60 @@
           </p>
           <ol>
             <li>
-              <p>The <code>alt</code> attribute, for an <code>img</code> or <code>input type="image"</code> element.</p>
+              <p>For an <code>img</code> or <code>input type="image"</code> element,</p> 
+                <ul><li>the <code>alt</code> attribute</li></ul>
             </li>
             <li>
-              <p>
-                The <code>value</code> attribute, for any button-style <code>input</code> element (that is, with a <code>type</code> of <code>submit</code>, <code>reset</code>, <code>button</code>, or <code>image</code>); if value is not specified for  <code>type</code> of <code>submit</code> or  <code>image</code>, substitute a localized version of the string "Submit" or "Submit Query"; if value is not specified for <code>type</code> of <code>reset</code>, substitute a localized version of the string "Reset".
-              </p>
+              <p>For a button-style <code>input</code> element (that is, with a <code>type</code> of <code>submit</code>, <code>reset</code>, <code>button</code>, or <code>image</code>)</p>
+              <ul>
+                <li>
+                  the <code>value</code> attribute
+                </li>
+                <li>if value is not specified for  <code>type</code> of <code>submit</code> or  <code>image</code>, substitute a localized version of the string "Submit" or "Submit Query"</li>
+                <li>if value is not specified for <code>type</code> of <code>reset</code>, substitute a localized version of the string "Reset"</li>
+              </ul>
             </li>
             <li>
-              <p>The associated <code>legend</code> or <code>label</code> element, for a <code>fieldset</code> element (legend) or a non-button <code>input</code> element, a <code>textarea</code> element, or other form element (label).</p>
+              <p>For a <code>fieldset</code> element,</p> 
+                <ul><li>the first child <code>legend</code> element</li></ul>
             </li>
             <li>
-              <p>An associated <code>caption</code> or <code>figcaption</code> element, for a <code>table</code> or <code>figure</code>, respectively.</p>
+              <p>For any <a href="http://www.w3.org/TR/html5/forms.html#category-label">lableable</a> element (e.g., <code>input</code>, <code>meter</code>, <code>progress</code>, <code>textarea</code>, <code>select</code>):</p>
+              <ul>
+                <li>any <code>label</code> elements for which the <code>current node</code> is the <a href="http://www.w3.org/TR/html5/forms.html#labeled-control">labelled control</a> according to the HTML specification [[!HTML5]]; if there are multiple such <code>label</code> elements, text alternatives must be generated from each and the results concatenated, in document order, separated by spaces
+                </li>
+              </ul>
             </li>
             <li>
-              <p>A <code>placeholder</code> attribute or an <code>aria-placeholder</code> attribute, for a non-button <code>input</code> element or a <code>textarea</code> element.</p>
+              <p>For a non-button <code>input</code> element or a <code>textarea</code> element,</p> 
+                <ul>
+                  <li>a <code>placeholder</code> attribute</li>
+                  <li>an <code>aria-placeholder</code> attribute</li>
+              </ul>
+            </li>
+            <li>
+              <p>For a <code>table</code> element,</p>
+              <ul><li>the first direct child <code>caption</code> element</li></ul>
+            </li>
+            <li>
+              <p>For a <code>figure</code> element,</p>
+              <ul><li>the first child <code>figcaption</code> element</li></ul>
             </li>
           </ol>
           <p>
-            When computing an <a>accessible description</a>, the same text alternatives should be considered, in the same priority order, but any alternative that was used in the generation of the accessible name should be ignored.
+            When computing an <a>accessible description</a>, if the <code>current node</code> is <strong>not</strong> the <code>original node</code> (i.e., if it is a <code>labelling node</code> or <code>content of a labelling node</code>), use the same text alternatives and priority order.
+          </p>
+          <p>
+            When computing an <a>accessible description</a> for the <code>original node</code>, the same text alternatives should be considered, in the same priority order, but any alternative that is used in the generation of the accessible name for that element MUST be ignored.
+<!--
+            User agents MAY explicitly keep track of which elements or attributes have been (or would be) used, or MAY compute a potential description, then compare whether the resulting text would be contained within the computed accessible name (and if so, discard that alternative text and continue with the other options or the remainder of the algorithm).
+-->
+          </p>
+          <p class="note">
+            Because the requirement to consider secondary alternative text for descriptions only applies to the <code>original node</code>, the net effect is as follows:
+            if the element has an <code>aria-labelledby</code> or <code>aria-label</code> attribute, use the first alternative text from this list (if there is one) for the description;
+            otherwise, use a fallback option from this list, if available;
+            otherwise, continue with the next step of the algorithm.
           </p>
         </li>
         <li id="step-element-contents">
