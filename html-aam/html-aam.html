@@ -6640,7 +6640,7 @@
             <li>
               <p>For any <a href="http://www.w3.org/TR/html5/forms.html#category-label">lableable</a> element (e.g., <code>input</code>, <code>meter</code>, <code>progress</code>, <code>textarea</code>, <code>select</code>):</p>
               <ul>
-                <li>any <code>label</code> elements for which the <code>current node</code> is the <a href="http://www.w3.org/TR/html5/forms.html#labeled-control">labelled control</a> according to the HTML specification [[!HTML5]]; if there are multiple such <code>label</code> elements, text alternatives must be generated from each and the results concatenated, in document order, separated by spaces
+                <li>any <code>label</code> elements for which the <a class="accname" href="#term-current-node">current node</a> is the <a href="http://www.w3.org/TR/html5/forms.html#labeled-control">labelled control</a> according to the HTML specification [[!HTML5]]; if there are multiple such <code>label</code> elements, text alternatives must be generated from each and the results concatenated, in document order, separated by spaces
                 </li>
               </ul>
             </li>
@@ -6661,16 +6661,16 @@
             </li>
           </ol>
           <p>
-            When computing an <a>accessible description</a>, if the <code>current node</code> is <strong>not</strong> the <code>original node</code> (i.e., if it is a <code>labelling node</code> or <code>content of a labelling node</code>), use the same text alternatives and priority order.
+            When computing an <a>accessible description</a>, if the <a class="accname" href="#term-current-node">current node</a> is <strong>not</strong> the <a class="accname" href="#term-original-node">original node</a> (i.e., if it is a <a class="accname" href="#term-labelling-node">labelling node</a> or <a class="accname" href="#term-content-labelling-node">content of a labelling node</a>), use the same text alternatives and priority order.
           </p>
           <p>
-            When computing an <a>accessible description</a> for the <code>original node</code>, the same text alternatives should be considered, in the same priority order, but any alternative that is used in the generation of the accessible name for that element MUST be ignored.
+            When computing an <a>accessible description</a> for the <a class="accname" href="#term-original-node">original node</a>, the same text alternatives should be considered, in the same priority order, but any alternative that is used in the generation of the accessible name for that element MUST be ignored.
 <!--
             User agents MAY explicitly keep track of which elements or attributes have been (or would be) used, or MAY compute a potential description, then compare whether the resulting text would be contained within the computed accessible name (and if so, discard that alternative text and continue with the other options or the remainder of the algorithm).
 -->
           </p>
           <p class="note">
-            Because the requirement to consider secondary alternative text for descriptions only applies to the <code>original node</code>, the net effect is as follows:
+            Because the requirement to consider secondary alternative text for descriptions only applies to the <a class="accname" href="#term-original-node">original node</a>, the net effect is as follows:
             if the element has an <code>aria-labelledby</code> or <code>aria-label</code> attribute, use the first alternative text from this list (if there is one) for the description;
             otherwise, use a fallback option from this list, if available;
             otherwise, continue with the next step of the algorithm.

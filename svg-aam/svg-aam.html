@@ -2021,7 +2021,7 @@ var mappingTableLabels = {
             <li>an element that is never rendered, regardless of its <code>display</code> property,  as described in the sections <a href="#exclude_elements">Excluding Elements from the Accessibility Tree</a>; this includes the <code>title</code> and <code>desc</code> elements and any other element with "no role may be applied" in the <a href="#role-mapping-table">role mapping table</a></li>
             <li>an element that is neither visible nor interactive due to the interplay of the CSS <code>visibility</code>, <code>fill</code>, <code>stroke</code>, and <code>pointer-events</code> properties and the <code>tabindex</code> attribute, as defined in the sections <a href="#exclude_elements">Excluding Elements from the Accessibility Tree</a> and <a href="#include_elements">Including Elements in the Accessibility Tree</a> of this specification</li>
             <li>an element with an <code>aria-hidden="true"</code> attribute for itself or any ancestor</li>
-            <li>any child text nodes and CSS-generated content nodes <strong>unless</strong> the <code>current node</code> is a text-container element (<code>text</code>, <code>tspan</code>, or <code>textPath</code>)
+            <li>any child text nodes and CSS-generated content nodes <strong>unless</strong> the <a class="accname" href="#term-current-node">current node</a> is a text-container element (<code>text</code>, <code>tspan</code>, or <code>textPath</code>)
           </ul>
         </li>
           <p>

@@ -170,13 +170,13 @@
     </p>
     <dl>
       <dt>the original node</dt> <dd>The DOM element associated with the accessible object for which an accessible name or description is required.</dd>
-      <dt>the current node</dt> 
+      <dt id="term-current-node">the current node</dt> 
           <dd>The node currently being processed by the algorithm to determine a text alternative, regardless of how the algorithm arrived at this node.</dd>
-      <dt>a labelling node</dt> 
+      <dt id="term-labelling-node">a labelling node</dt> 
           <dd>A node that is being processed because of an explicit labelling relationship that was indicated by the author using ARIA attributes or host language semantics.</dd>
-      <dt>a content node</dt> 
+      <dt id="term-content-node">a content node</dt> 
           <dd>A node that is being processed because it forms part of the child content of the original node.</dd>
-      <dt>content of a labelling node</dt> 
+      <dt id="term-content-labelling-node">content of a labelling node</dt> 
           <dd>A node that is being processed because it forms part of the child content of a labelling node.</dd>
     </dl>
     <p class="ednote">
@@ -185,11 +185,11 @@
       Three types of nodes are considered when processing content, each of which uses a different text alternative algorithm: 
     </p>
     <dl>
-      <dt>DOM elements</dt> 
+      <dt id="term-DOM-elements">DOM elements</dt> 
           <dd>An element in the document object model, possibly with attributes, dynamic DOM properties, and child content.  The text equivalent of the element may be generated from any of these features, and the correct text will often depend on roles, other ARIA properties, or semantics of the host language.</dd>
-      <dt>DOM text nodes</dt> 
+      <dt id="term-DOM-text-node">DOM text nodes</dt> 
           <dd>A section of text content that exists in the document object model, as the sole child content of an element or as a string of text in between two child elements.</dd>
-      <dt>CSS-generated content nodes</dt> 
+      <dt id="term-CSS-generated-content">CSS-generated content nodes</dt> 
           <dd>CSS styling introduces content into the rendered document that is not directly contained in the document object model.  This generated content may be text or image; a proposed CSS property would allow stylesheet authors to indicate appropriate alternative text for generated content. A complete text representation of any element will include CSS-generated content, so the alternative text computation proceeds as if text nodes existed for this content.</dd>
     </dl>
     <p>
@@ -197,9 +197,9 @@
       Text alternatives are normalized to flat strings according to the following definitions:
     </p>
     <dl>
-      <dt>Flat string</dt>
+      <dt id="term-flat-string">Flat string</dt>
           <dd>A string that only contains character data; it does not contain any markup or styling information.  Furthermore, all whitespace characters are replaced with a single space, and multiple consecutive spaces are reduced to a single space.</dd> 
-      <dt>Whitespace</dt>
+      <dt id="term-whitespace">Whitespace</dt>
           <dd>Any of the following characters: spaces, carriage returns, newlines, tabs, and form-feeds.</dd>
     </dl>
     <p class="ednote">
@@ -277,7 +277,7 @@
       <p>The text alternative for a DOM element is computed as follows:</p>
         <ol>
           <li id="step-element-ariaby">
-            If the <code>current node</code> is the <code>original node</code> or a <code>content node</code>, <strong>and</strong> it has a non-empty <code>aria-labelledby</code> <a class="termref">attribute</a> (if computing a <a class="termref" data-lt="accessible name">name</a>) or <code>aria-describedby</code> <a class="termref">attribute</a> (if computing a <a class="termref" data-lt="accessible description">description</a>):
+            If the <a href="#term-current-node">current node</a> is the <a href="#term-original-node">original node</a> or a <a href="#term-content-node">content node</a>, <strong>and</strong> it has a non-empty <code>aria-labelledby</code> <a class="termref">attribute</a> (if computing a <a class="termref" data-lt="accessible name">name</a>) or <code>aria-describedby</code> <a class="termref">attribute</a> (if computing a <a class="termref" data-lt="accessible description">description</a>):
             <ol>
               <li id="step-element-ariaby-recurse">
                 <p>
@@ -285,10 +285,10 @@
                 </p>
                 <ul>
                   <li>that token is a <a>valid IDREF</a> referencing an element in the document, <strong>and</strong></li>
-                  <li>the referenced element is <strong>either</strong> the <code>current node</code> or it is another element that has <strong>not</strong> been previously processed in the course of generating the alternative text for the <code>original node</code>,</li>
+                  <li>the referenced element is <strong>either</strong> the <a href="#term-current-node">current node</a> or it is another element that has <strong>not</strong> been previously processed in the course of generating the alternative text for the <a href="#term-original-node">original node</a>,</li>
                 </ul>
                 <p>
-                  then generate a text alternative for the referenced element using this <a href="#mapping_additional_nd_te_element">Text Alternative for an Element</a> algorithm, with the referenced element as the <code>current node</code> and as a <code>labelling node</code>.
+                  then generate a text alternative for the referenced element using this <a href="#mapping_additional_nd_te_element">Text Alternative for an Element</a> algorithm, with the referenced element as the <a href="#term-current-node">current node</a> and as a <a href="#term-labelling-node">labelling node</a>.
                 </p>
               </li>
               <li id="step-element-ariaby-join">
@@ -303,7 +303,7 @@
                 The requirement to consider whether alternative text has previously been collected from an element, prior to following a labelling relationship, avoids repetitive content and unexpected loops in the algorithm. 
               </p>
               <p>
-                Because <code>aria-labelledby</code> and <code>aria-describedby</code> attributes are only processed for the <code>original node</code> or a <code>content node</code>, these labelling relationships are <strong>not</strong> recursive.  This can lead to missing alternative text if an author is not careful. In the following snippet, the names would be computed as follows:
+                Because <code>aria-labelledby</code> and <code>aria-describedby</code> attributes are only processed for the <a href="#term-original-node">original node</a> or a <a href="#term-content-node">content node</a>, these labelling relationships are <strong>not</strong> recursive.  This can lead to missing alternative text if an author is not careful. In the following snippet, the names would be computed as follows:
               </p>
               <ul>
                 <li><code>element1</code>'s  <a class="termref">accessible name</a> is "hello" (assuming its role supports names from contents).</li>
@@ -322,7 +322,7 @@
             </p>
           </li>
           <li id="step-element-embedded-control">
-            Otherwise, if the <code>current node</code> is a <code>content node</code> or <code>content of a labelling node</code> <strong>and</strong> the <code>current node</code>'s computed role is an <a class="role-reference" href="#input">input</a> or a <a class="role-reference" href="#range">range</a> (or a subclass thereof), then return the current value of the input, as follows:
+            Otherwise, if the <a href="#term-current-node">current node</a> is a <a href="#term-content-node">content node</a> or <a href="#term-content-labelling-node">content of a labelling node</a> <strong>and</strong> the <a href="#term-current-node">current node</a>'s computed role is an <a class="role-reference" href="#input">input</a> or a <a class="role-reference" href="#range">range</a> (or a subclass thereof), then return the current value of the input, as follows:
             <ul>
               <li id="step-element-embedded-control-textbox">
                 <p>
@@ -359,11 +359,11 @@
             </p>
           </li>
           <li id="step-element-label">
-            Otherwise, if computing a <a class="termref" data-lt="accessible name">name</a>, and if the <code>current node</code> has a non-empty <code>aria-label</code> <a class="termref">attribute</a>, return the value of <code>aria-label</code>.
+            Otherwise, if computing a <a class="termref" data-lt="accessible name">name</a>, and if the <a href="#term-current-node">current node</a> has a non-empty <code>aria-label</code> <a class="termref">attribute</a>, return the value of <code>aria-label</code>.
             <div><details>
               <summary>Comment and Example:</summary>
               <p>
-                Because of the priority order presented here, an <code>aria-label</code> value is normally not used for that element's name if an <code>aria-labelledby</code> attribute is present.  However, the <code>aria-label</code> value may be incorporated in the name if the element itself is recursively referenced by its own <code>aria-labelledby</code> attribute.  When the text alternative algorithm is run recursively on the element, it is treated as a <code>labelling node</code> and <code>aria-labelledby</code> is skipped.  This allows authors to concatenate the text of a visible label with additional alternative text. 
+                Because of the priority order presented here, an <code>aria-label</code> value is normally not used for that element's name if an <code>aria-labelledby</code> attribute is present.  However, the <code>aria-label</code> value may be incorporated in the name if the element itself is recursively referenced by its own <code>aria-labelledby</code> attribute.  When the text alternative algorithm is run recursively on the element, it is treated as a <a href="#term-labelling-node">labelling node</a> and <code>aria-labelledby</code> is skipped.  This allows authors to concatenate the text of a visible label with additional alternative text. 
               </p>
               <p>The following example shows the interaction of <code>aria-labelledby</code> and <code>aria-label</code> when a <a class="termref">node</a> has an  <code>aria-labelledby</code> that refers to itself.  The <code>&lt;span role="button"&gt;</code> elements have the <a class="termref">accessible names</a> "Delete Documentation.pdf" and "Delete HolidayLetter.pdf", respectively.</p>
                 <pre class="example highlight"><code>&lt;h1&gt;Files&lt;/h1&gt;
@@ -379,7 +379,7 @@
 &lt;/ul&gt;</code></pre>
               </details></div>
           </li>
-          <li id="step-element-native">Otherwise, if host language semantics for the <code>current node</code> provide an <a class="termref">attribute</a> that defines a text alternative for the name or description, as appropriate, return that attribute's value as a <code>flat string</code>.  If the host language semantics define another <a class="termref">element</a> as the text alternative name or description, generate a text alternative from that element by  <a href="#mapping_additional_nd_te_element">Text Alternative for an Element</a> algorithm, with the referenced element as the <code>current node</code> and as a <code>labelling node</code>, unless that element has been explicitly marked as presentational (<code>role="presentation"</code> or <code>role="none"</code>) by the author.
+          <li id="step-element-native">Otherwise, if host language semantics for the <a href="#term-current-node">current node</a> provide an <a class="termref">attribute</a> that defines a text alternative for the name or description, as appropriate, return that attribute's value as a <code>flat string</code>.  If the host language semantics define another <a class="termref">element</a> as the text alternative name or description, generate a text alternative from that element by  <a href="#mapping_additional_nd_te_element">Text Alternative for an Element</a> algorithm, with the referenced element as the <a href="#term-current-node">current node</a> and as a <a href="#term-labelling-node">labelling node</a>, unless that element has been explicitly marked as presentational (<code>role="presentation"</code> or <code>role="none"</code>) by the author.
             <p class="ednote">
               (Amelia) I'm not sure how much I've changed the wording taken "from second note in <a href="https://www.w3.org/WAI/PF/Group/track/issues/522">ISSUE-522</a>", which I can't access.  However, the changes were made for two reasons: make it clear that a host-language labelling relationship to another element causes a recursive processing of the algorithm; make it clear that alternative text elements (such as SVG's title/desc) that by default have no role are not excluded.
             </p>
@@ -389,37 +389,37 @@
                 For example, in <abbr title="Hypertext Markup Language">HTML</abbr>, the <code>img</code> element's <code>alt</code> attribute defines a text alternative string, and the <code>label</code> element provides text for the referenced form element.  In <abbr title="Scalable Vector Graphics">SVG</abbr>, the <code>desc</code> and <code>title</code> elements provide a description and a label, respectively, for their parent element. 
               </p>
             </details></div>
-          <li id="step-element-contents">Otherwise, if the <code>current node</code> is <strong>not</strong> the <code>original node</code>, <strong>or</strong> if computing an <a>accessible name</a> and the <code>current node</code>'s computed <a class="termref">role</a> allows "Name From: contents":
+          <li id="step-element-contents">Otherwise, if the <a href="#term-current-node">current node</a> is <strong>not</strong> the <a href="#term-original-node">original node</a>, <strong>or</strong> if computing an <a>accessible name</a> and the <a href="#term-current-node">current node</a>'s computed <a class="termref">role</a> allows "Name From: contents":
             <ol>
               <li id="step-element-contents-css">
                 <p>
-                Follow the <a href="#mapping_additional_nd_te_css-insert">algorithm for inserting <abbr title="Cascading Style Sheets">CSS</abbr>-generated text nodes</a> for the <code>current node</code> into its child content.
+                Follow the <a href="#mapping_additional_nd_te_css-insert">algorithm for inserting <abbr title="Cascading Style Sheets">CSS</abbr>-generated text nodes</a> for the <a href="#term-current-node">current node</a> into its child content.
                 </p>
               </li>
               <li id="step-element-contents-hidden">
                 <p>
-                  Exclude all child nodes of the <code>current node</code> that are <a class="termref">hidden</a>,
-                  <strong>unless</strong> the <code>current node</code> is <strong>also</strong> hidden itself.
+                  Exclude all child nodes of the <a href="#term-current-node">current node</a> that are <a class="termref">hidden</a>,
+                  <strong>unless</strong> the <a href="#term-current-node">current node</a> is <strong>also</strong> hidden itself.
                 </p>
               </li>
               <li id="step-element-contents-children">
                 <p>
-                  For each remaining child node of the <code>current node</code>, in order&mdash;including child elements, DOM text nodes (even if only containing whitespace), and the inserted CSS-generated text nodes&mdash;calculate a text alternative by running the appropriate algorithm with the node as a <code>content node</code> (if the <code>current node</code> is the <code>original node</code> or a <code>content node</code>) or as <code>content of labelling node</code> (if the <code>current node</code> is a <code>labelling node</code> or <code>content of labelling node</code>).
+                  For each remaining child node of the <a href="#term-current-node">current node</a>, in order&mdash;including child elements, DOM text nodes (even if only containing whitespace), and the inserted CSS-generated text nodes&mdash;calculate a text alternative by running the appropriate algorithm with the node as a <a href="#term-content-node">content node</a> (if the <a href="#term-current-node">current node</a> is the <a href="#term-original-node">original node</a> or a <a href="#term-content-node">content node</a>) or as <a href="#term-content-labelling-node">content of labelling node</a> (if the <a href="#term-current-node">current node</a> is a <a href="#term-labelling-node">labelling node</a> or <a href="#term-content-labelling-node">content of labelling node</a>).
                 </p>
                 <p>
-                  Before processing each child element, determine whether that element has been previously processed by this algorithm in the course of generating the text alternative for the <code>original node</code>.  If it has, do not process the element a second time, but instead treat it as a hidden node.
+                  Before processing each child element, determine whether that element has been previously processed by this algorithm in the course of generating the text alternative for the <a href="#term-original-node">original node</a>.  If it has, do not process the element a second time, but instead treat it as a hidden node.
                 </p>
               </li>
               <li id="step-element-contents-whitespace">
                 <p>
-                  Concatenate the text alternatives of the child content, in order. If the <code>current node</code> is displayed (or would be displayed in visual media) with a line break before and after its content (e.g., <abbr title="Cascading Style Sheets">CSS</abbr> <code>block</code> or <code>list-item</code> display modes), append a space before and after the concatenated content; do not append spaces if the element is displayed inline.  Return the concatenated string as the text alternative for the <code>current node</code>.
+                  Concatenate the text alternatives of the child content, in order. If the <a href="#term-current-node">current node</a> is displayed (or would be displayed in visual media) with a line break before and after its content (e.g., <abbr title="Cascading Style Sheets">CSS</abbr> <code>block</code> or <code>list-item</code> display modes), append a space before and after the concatenated content; do not append spaces if the element is displayed inline.  Return the concatenated string as the text alternative for the <a href="#term-current-node">current node</a>.
                 </p>
               </li>
             </ol>
             <div><details>
               <summary>Comment and Examples:</summary>
               <p>
-                This step can apply recursively to child elements, resulting in text collected from all the elements in the <code>current node</code>'s subtree, no matter how deep it is. However, any given descendant <a class="termref">element</a>'s text alternative may result from explicit labelling markup provided by the author, instead of from its subtree. 
+                This step can apply recursively to child elements, resulting in text collected from all the elements in the <a href="#term-current-node">current node</a>'s subtree, no matter how deep it is. However, any given descendant <a class="termref">element</a>'s text alternative may result from explicit labelling markup provided by the author, instead of from its subtree. 
               </p>
               <p>
                 Because it is a recursive algorithm, there is a potential for infinite loops. For this reason, both this step and <a href="step-element-ariaby">Step 1</a> require user agents to determine whether they have already processed a given element before processing it a second time. The following snippet of an HTML form shows two cases where this check prevents a loop:
@@ -482,7 +482,7 @@
             </p>
           </li>
           <li id="step-element-tooltip">
-            Otherwise, if host language features provide content for the <code>current node</code> that is normally displayed as a tooltip, return the tooltip's text value as a flat string, padded before and after with spaces. 
+            Otherwise, if host language features provide content for the <a href="#term-current-node">current node</a> that is normally displayed as a tooltip, return the tooltip's text value as a flat string, padded before and after with spaces. 
               <p class="ednote">
                 (Amelia)  The tooltip may therefore end up as the accessible name or as the accessible description, depending on what other alternative text is provided.  The check against duplicate description content prevents it from being both. The use of tooltips as descriptions is something we've discussed for the SVG accessibility mappings.  Tooltips can be important text content that the author provided to pointer users, and it would ideally therefore be accessible to AT users.  However, it is additional content, that should not replace the visible text content or proper label.  I have also changed the wording from "tooltip attribute" to allow for other host language features (i.e., the <code>title</code> child element in SVG).
               </p>
@@ -532,17 +532,17 @@
     <ul>
       <li>
         <p>
-          If the <code>current node</code> is a list element (those for which the computed value of either the <a href="http://www.w3.org/TR/CSS2/generate.html#propdef-list-style-type"><code>list-style-type</code></a> or <a href="http://www.w3.org/TR/CSS2/generate.html#propdef-list-style-image"><code>list-style-image</code></a> <abbr title="Cascading Style Sheets">CSS</abbr> properties is something other than <code>none</code>), a list marker node should be inserted <strong>before</strong> any child content (including text nodes) in the <abbr title="document object model">DOM</abbr>.
+          If the <a href="#term-current-node">current node</a> is a list element (those for which the computed value of either the <a href="http://www.w3.org/TR/CSS2/generate.html#propdef-list-style-type"><code>list-style-type</code></a> or <a href="http://www.w3.org/TR/CSS2/generate.html#propdef-list-style-image"><code>list-style-image</code></a> <abbr title="Cascading Style Sheets">CSS</abbr> properties is something other than <code>none</code>), a list marker node should be inserted <strong>before</strong> any child content (including text nodes) in the <abbr title="document object model">DOM</abbr>.
         </p>
       </li>
       <li>
         <p>
-          If the <code>current node</code> has a <code>before</code> pseudo-element whose <code>content</code> property is not <code>normal</code> and whose <code>display</code> property is not <code>none</code>, a corresponding pseudo-element node should be inserted <strong>after</strong> any list marker node but <strong>before</strong> any child content (including text nodes) in the <abbr title="document object model">DOM</abbr>.
+          If the <a href="#term-current-node">current node</a> has a <code>before</code> pseudo-element whose <code>content</code> property is not <code>normal</code> and whose <code>display</code> property is not <code>none</code>, a corresponding pseudo-element node should be inserted <strong>after</strong> any list marker node but <strong>before</strong> any child content (including text nodes) in the <abbr title="document object model">DOM</abbr>.
         </p>
       </li>
       <li>
         <p>
-          If the <code>current node</code> has an <code>after</code> pseudo-element whose <code>content</code> property is not <code>normal</code> and whose <code>display</code> property is not <code>none</code>, a corresponding pseudo-element node should be inserted <strong>after</strong> any child content (including text nodes) in the <abbr title="document object model">DOM</abbr>.
+          If the <a href="#term-current-node">current node</a> has an <code>after</code> pseudo-element whose <code>content</code> property is not <code>normal</code> and whose <code>display</code> property is not <code>none</code>, a corresponding pseudo-element node should be inserted <strong>after</strong> any child content (including text nodes) in the <abbr title="document object model">DOM</abbr>.
         </p>
       </li>
     </ul>
