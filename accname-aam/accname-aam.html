@@ -147,465 +147,213 @@
 <section id="glossary">
   <h2>Important Terms</h2>
   <p>This section is <a class="termref">normative</a>.</p>
-  <div data-include="../common/terms.html" data-oninclude="fixIncludes"></div>
-  <p class="ednote">
-    (Amelia) Is there any way to subset the common terms list to only print out terms that are actually used in this document?  More than half of these terms are not used anywhere in this specification.
-  </p>
+  <div data-include="../common/terms.html" data-oninclude="restrictReferences"></div>
 </section>
 <section id="mapping_additional_nd" class="normative">
   <h2>Name and Description</h2>
   <p>This section is <a class="termref">normative</a>.</p>
-  <p>
-    This section describes how and when user agents should compute the name and description for elements in the document.  
-    The purpose of the computation is to create a <a class="termref">perceivable</a> label or description for alternative presentations, in the form of a flat string.
-    In a WAI-ARIA conforming document, elements that a user interacts with or that represent landmarks on the page need an accessible name to be perceivable and therefore <a class="termref">operable</a>.  Elements which are not fully <a class="termref">understandable</a> based solely on the name, role, and text content (in the absence of imagery or styling information) can be made so with an appropriate accessible description.
-  </p>
-  <p>
-    The starting point of the name and description computation is a <abbr title="Document Object Model">DOM</abbr> <a class="termref">element</a>.  Depending on the semantics of the element (as indicated with ARIA roles and properties or with host language features), these alternative text representations may be derived from the element's attributes, its child content, or from other elements in the document.  The <a href="#mapping_additional_nd_te">Text Alternative Computation</a> provides a deterministic algorithm for determining the correct alternative text for a given document model (including styling instructions).  Some steps in the algorithm refer to host language features; separate specifications for the most common web languages will explicitly define how these features should be interpreted. 
-  </p>
-  <section id="terminology">
-    <h3>Terminology</h3>
-    <p>
-      Alternative text may in some cases be generated from child contents, or from a relationships to another element.  As a result, the text computation is partially recursive.  However, the text generated from each node may be different when it is processed recursively than if it is assessed directly.  For this reason, the  <a href="#mapping_additional_nd_te">text alternative computation</a> algorithms use the following terms to distinguish why a given node is being processed:
-    </p>
-    <dl>
-      <dt>the original node</dt> <dd>The DOM element associated with the accessible object for which an accessible name or description is required.</dd>
-      <dt id="term-current-node">the current node</dt> 
-          <dd>The node currently being processed by the algorithm to determine a text alternative, regardless of how the algorithm arrived at this node.</dd>
-      <dt id="term-labelling-node">a labelling node</dt> 
-          <dd>A node that is being processed because of an explicit labelling relationship that was indicated by the author using ARIA attributes or host language semantics.</dd>
-      <dt id="term-content-node">a content node</dt> 
-          <dd>A node that is being processed because it forms part of the child content of the original node.</dd>
-      <dt id="term-content-labelling-node">content of a labelling node</dt> 
-          <dd>A node that is being processed because it forms part of the child content of a labelling node.</dd>
-    </dl>
-    <p class="ednote">
-      The wording "original node" is used instead of "root node", because the latter has a distinct meaning when discussing a document object model.  The other terms are introduced to avoid having to repeat text at multiple stages of the algorithm (such as iterating all the ways in which one node can label another).
-    <p>
-      Three types of nodes are considered when processing content, each of which uses a different text alternative algorithm: 
-    </p>
-    <dl>
-      <dt id="term-DOM-elements">DOM elements</dt> 
-          <dd>An element in the document object model, possibly with attributes, dynamic DOM properties, and child content.  The text equivalent of the element may be generated from any of these features, and the correct text will often depend on roles, other ARIA properties, or semantics of the host language.</dd>
-      <dt id="term-DOM-text-node">DOM text nodes</dt> 
-          <dd>A section of text content that exists in the document object model, as the sole child content of an element or as a string of text in between two child elements.</dd>
-      <dt id="term-CSS-generated-content">CSS-generated content nodes</dt> 
-          <dd>CSS styling introduces content into the rendered document that is not directly contained in the document object model.  This generated content may be text or image; a proposed CSS property would allow stylesheet authors to indicate appropriate alternative text for generated content. A complete text representation of any element will include CSS-generated content, so the alternative text computation proceeds as if text nodes existed for this content.</dd>
-    </dl>
-    <p>
-      The final output of either alternative text computation (name or description) is a flat, unstructured string, without styling information or markup.
-      Text alternatives are normalized to flat strings according to the following definitions:
-    </p>
-    <dl>
-      <dt id="term-flat-string">Flat string</dt>
-          <dd>A string that only contains character data; it does not contain any markup or styling information.  Furthermore, all whitespace characters are replaced with a single space, and multiple consecutive spaces are reduced to a single space.</dd> 
-      <dt id="term-whitespace">Whitespace</dt>
-          <dd>Any of the following characters: spaces, carriage returns, newlines, tabs, and form-feeds.</dd>
-    </dl>
-    <p class="ednote">
-      (Amelia) Is a more precise definition of whitespace characters appropriate?  If so, should it be the narrow set of characters that HTML/XML use for whitespace collapsing, or the much broader class of Unicode whitespace characters?
-    </p>
-  </section>
+  <p>The starting point of the name and description computation is a <abbr title="Document Object Model">DOM</abbr> <a class="termref">element</a>.  The output is a flat, unstructured string that can be as simple as a single word, or a string of space-separated tokens.  Examples include <code>Save</code> and <code>Reload from disk</code>.</p>
+  <p>An important factor is the <a class="termref">element</a>'s <a class="termref">role</a>, that determines which content contributes to the name string.  Roles have a <code>nameFrom</code> <abbr title="Resource Description Framework">RDF</abbr> property, with two possible values:  </p>
+  <dl class="runin">
+    <dt>author</dt>
+    <dd>name is generated from values provided by the author in explicit markup features such as the <code>aria-label</code> and <code>aria-labelledby</code> <a class="termref">attribute</a>, or a host language labeling mechanism, such as the <code>alt</code> or <code>title</code> <a class="termref">attribute</a> in <abbr title="Hypertext Markup Language">HTML</abbr>, or the <code>desc</code> <a class="termref">element</a> in <abbr title="Scalable Vector Graphics">SVG</abbr>. </dd>
+    <dt>contents</dt>
+    <dd>name is generated from the <a class="termref" data-lt="text node">Text nodes</a> associated with the <a class="termref">element</a>. Although this may be allowed in addition to "author" in some <a class="termref">roles</a>, "content" is used only if higher priority "author" features are not provided. Priority is defined by the <a href="#mapping_additional_nd_te">text alternative computation</a> algorithm.</dd>
+  </dl>
+  <p class="ednote">(Joseph) Need links into ARIA spec to (1) a list of nameFrom:author roles, and (2) a list of nameFrom:contents roles.  Reference these at step 2F below. </p>
   <section id="mapping_additional_nd_name">
     <h3>Name Computation</h3>
-    <p>
-      <a class="termref">User agents</a> MUST compute an <a class="termref">accessible name</a> for every element that is represented by an <a class="termref">accessible object</a> in the <a class="termref">accessibility tree</a>, using the rules outlined below in the section titled <a href="#mapping_additional_nd_te">Text Alternative Computation</a>.  Authors MUST ensure that the computation yields a non-empty accessible name for any element whose computed role has a value of true for the property <code>accessible name required</code> in the WAI-ARIA specifications [[!WAI-ARIA]].
-    </p>
-    <p class="ednote">
-      (Amelia) I've added in the clarification about which elements require accessible names to be calculated.
-    </p>
-    <p class="ednote">
-      (Amelia) The requirement on authors is consistent with the main ARIA spec, but it may not be appropriate to have author-focused requirements in this specification.  Also, the <code>accessible name required</code> property of each role, although indicated in the role's characteristics table, is not clearly defined in that specification.
-    </p>
-    <p>
-      The name may be as simple as a single word, or a string of space-separated tokens.  Examples of valid names include <code>Save</code> and <code>Reload from disk</code>.  For elements where names are not required by the element's role, the result of the computation may be an empty string.
-    </p>
-    <p>
-      The name does not include the description of the element's role (such as "button" or "slider"), which is communicated to assistive technologies separately.
-    </p>    
-    <p>
-      An important factor in the name computation is the <a class="termref">element</a>'s <a class="termref">role</a>, which determines what content contributes to the name string.  The impact of the computed role is the same regardless of whether it was explicitly specified by the author or derived from the host language semantics.  Roles have a <code>nameFrom</code> <abbr title="Resource Description Framework">RDF</abbr> property, with two possible values:  </p>
-    <dl class="runin">
-      <dt>author</dt>
-      <dd>name is generated from values provided by the author in explicit markup features such as the <code>aria-label</code> and <code>aria-labelledby</code> <a class="termref">attribute</a>, or a host language labeling mechanism, such as the <code>alt</code> or <code>title</code> <a class="termref">attribute</a> in <abbr title="Hypertext Markup Language">HTML</abbr>, or the <code>desc</code> <a class="termref">element</a> in <abbr title="Scalable Vector Graphics">SVG</abbr>. </dd>
-      <dt>contents</dt>
-      <dd>name is generated from the <a class="termref" data-lt="text node">text nodes</a> and child elements associated with the <a class="termref">element</a>. Although this may be allowed in addition to "author" in some <a class="termref">roles</a>, "content" is used only if higher priority "author" features are not provided. Priority is defined by the <a href="#mapping_additional_nd_te">text alternative computation</a> algorithm.</dd>
-    </dl>
-    <p class="ednote">(Joseph) Need links into ARIA spec to (1) a list of nameFrom:author roles, and (2) a list of nameFrom:contents roles.  Reference these at step 5 of the text alternative for an element algorithm. </p>
-    <p>
+    <p><a class="termref">User agents</a> MUST compute an <a class="termref">accessible name</a> using the rules outlined below in the section titled <a href="#mapping_additional_nd_te">Text Alternative Computation</a>.</p>
   </section>
   <section id="mapping_additional_nd_description">
     <h3>Description Computation</h3>
-    <p>
-      Accessible descriptions are used to provide textual representations of graphics or additional context for widgets.  Descriptions are often longer than names, in the form of fully punctuated sentences.  The accessible description generated by this computation is nonetheless still a flat string.  However, that flat description may be complemented by the declared relationship to the fully structured elements from which it is derived, which assistive technologies can make accessible to users through other means.
-    </p>
-    <p>
-      <a class="termref">User agents</a> MUST compute an accessible description for an element that is represented by an <a class="termref">accessible object</a> in the <a class="termref">accessibility tree</a> in any of the following cases:
-    </p>
-    <ul>
-      <li>An <a class="property-reference" href="#aria-describedby"><code>aria-describedby</code></a> attribute was provided for that element.</li>
-      <li>A labelling relationship has been provided using host language features, other than a labelling relationship that was used to generate the accessible name.</li>
-      <li>Alternative text or tooltip text was provided using host language features.</li>
-    </ul>
-    <p>
-      The text description is generated following the methods outlined in the section titled <a href="#mapping_additional_nd_te">Text Alternative Computation</a>. 
-      In the absence of explicit labelling relationships or tooltip elements, descriptions are not generated from an element's contents.
-    </p>
-    <p>
-      After computing both the accessible name and the accessible description for the element according to the algorithm (including whitespace normalization), user agents MUST compare the two.  If the entirety of the description is contained within the name, then there is no accessible description for the element.
-    </p>
-    <p class="ednote">
-      (Amelia) The requirements for generating an accessible description have been extended to include host-language features as well as <code>aria-describedby</code>.  I'm not sure if user agents currently compute descriptions in all these cases; that may be an argument for making some of these points SHOULD instead of MUST.  The requirement to compare the name and description, and drop redundant descriptions, replaces step-by-step requirements to check whether a given text alternative has already been used.
-    </p>
+    <p>If <a class="property-reference" href="#aria-describedby"><code>aria-describedby</code></a> is present, <a class="termref">user agents</a> MUST compute the accessible description by	concatenating the text alternatives for elements referenced by an <code>aria-describedby</code> attribute on the current element. The text alternatives for the referenced elements are computed using a  							number of methods, outlined below in the section titled <a href="#mapping_additional_nd_te">Text Alternative Computation</a>. </p>
   </section>
   <section id="mapping_additional_nd_te">
     <h3>Text Alternative Computation</h3>
-    <p>
-      The text alternative computation is used to generate both the <a class="termref">accessible name</a> and <a class="termref">accessible description</a>. It consists of a set of algorithms for determining a text alternative for each node type: <a href="#mapping_additional_nd_te_element">DOM elements</a>, <a href="#mapping_additional_nd_te_node">DOM text nodes</a>, and <a href="#mapping_additional_nd_te_css-alt">CSS-generated text nodes</a>.  In addition, an <a href="#mapping_additional_nd_te_css-insert">algorithm is provided for inserting the CSS-generated text nodes within the DOM tree structure</a>.
-    </p>
-    <p>
-      For the <a href="#mapping_additional_nd_te_element">Text Alternative for an Element</a> algorithm, some steps are different for names versus descriptions, for original nodes versus labelling nodes or content nodes, as well as for certain element <a class="termref">roles</a> or for markup combinations that represent host language semantic features.
-    </p>
-    <p>
-      The computation is initialized by running the <a href="#mapping_additional_nd_te_element">Text Alternative for an Element</a> algorithm on the original node.  Some of the options are recursive, requiring text alternatives to be calculated for one or more other nodes in the document.
-    </p>
-    <p>       
-      The text alternative returned for the original node (including the concatenated alternatives for other nodes where required) is used as that element's <a class="termref">accessible name</a> or <a class="termref">accessible description</a> after normalizing whitespace.  User agents MAY perform whitespace normalization to meet the definition of a flat string after processing each node, or once only after compiling the final string.  User agents SHOULD trim leading and trailing whitespace from the final compiled name or description, but MUST NOT do so at intermediary stages (which could result in whitespace being omitted incorrectly).
-    </p>
-    <section id="mapping_additional_nd_te_element">
-      <h4>Text Alternative for an Element</h4>
-      <p>The text alternative for a DOM element is computed as follows:</p>
-        <ol>
-          <li id="step-element-ariaby">
-            If the <a href="#term-current-node"><var>current node</var></a> is the <a href="#term-original-node"><var>original node</var></a> or a <a href="#term-content-node"><var>content node</var></a>, <strong>and</strong> it has a non-empty <code>aria-labelledby</code> <a class="termref">attribute</a> (if computing a <a class="termref" data-lt="accessible name">name</a>) or <code>aria-describedby</code> <a class="termref">attribute</a> (if computing a <a class="termref" data-lt="accessible description">description</a>):
-            <ol>
-              <li id="step-element-ariaby-recurse">
-                <p>
-                  For each token in the relevant attribute, in the order they are specified, if
-                </p>
-                <ul>
-                  <li>that token is a <a>valid IDREF</a> referencing an element in the document, <strong>and</strong></li>
-                  <li>the referenced element is <strong>either</strong> the <a href="#term-current-node"><var>current node</var></a> or it is another element that has <strong>not</strong> been previously processed in the course of generating the alternative text for the <a href="#term-original-node"><var>original node</var></a>,</li>
-                </ul>
-                <p>
-                  then generate a text alternative for the referenced element using this <a href="#mapping_additional_nd_te_element">Text Alternative for an Element</a> algorithm, with the referenced element as the <a href="#term-current-node"><var>current node</var></a> and as a <a href="#term-labelling-node"><var>labelling node</var></a>.
-                </p>
-              </li>
-              <li id="step-element-ariaby-join">
-                <p>
-                  Concatenate the returned text alternatives, separated by spaces, in the order that the IDREFs were specified in the <code>aria-labelledby</code> or <code>aria-describedby</code> attribute, and return the resulting string.
-                </p>
-              </li>
-            </ol>
-            <div><details>
-              <summary>Comment and example:</summary>
-              <p>
-                The requirement to consider whether alternative text has previously been collected from an element, prior to following a labelling relationship, avoids repetitive content and unexpected loops in the algorithm. 
-              </p>
-              <p>
-                Because <code>aria-labelledby</code> and <code>aria-describedby</code> attributes are only processed for the <a href="#term-original-node"><var>original node</var></a> or a <a href="#term-content-node"><var>content node</var></a>, these labelling relationships are <strong>not</strong> recursive.  This can lead to missing alternative text if an author is not careful. In the following snippet, the names would be computed as follows:
-              </p>
-              <ul>
-                <li><code>element1</code>'s  <a class="termref">accessible name</a> is "hello" (assuming its role supports names from contents).</li>
-                <li><code>element2</code>'s <a class="termref">accessible name</a> is also "hello" because the <code>aria-labelledby</code> attribute leads to <code>element1</code>.</li>
-                <li><code>element3</code> has no <a class="termref">accessible name</a>.  The computation involves a first traversal of its <code>aria-labelledby</code> leading to <code>element2</code>, but <code>element2</code>'s  <code>aria-labelledby</code> is not subsequently followed, and it does not otherwise provide an accessible name. </li>
-                <li><code>element4</code>'s <a class="termref">accessible name</a> is "good-bye" because the first traversal of its <code>aria-labelledby</code> attribute leads to <code>element3</code>, but <code>element3</code>'s <code>aria-labelledby</code> attribute is now ignored when it is processed as a labelling node, allowing the <code>aria-label</code> attribute to be used instead.</li></li>
-              </ul>
-              <pre class="example highlight"><code>&lt;element1 id="el1"&gt; hello &lt;/element1&gt;
-&lt;element2 id="el2" aria-labelledby="el1" /&gt;
-&lt;element3 id="el3" aria-labelledby="el2" aria-label="good-bye" /&gt;
-&lt;element4 id="el4" aria-labelledby="el3" /&gt;</code>
-              </pre>
-            </details></div>
-            <p class="ednote">
-              (Amelia) The requirement to avoid repeated content was previously only mentioned in the step for concatenating child content; it seemed appropriate to also express it here.
-            </p>
-          </li>
-          <li id="step-element-embedded-control">
-            Otherwise, if the <a href="#term-current-node"><var>current node</var></a> is a <a href="#term-content-node"><var>content node</var></a> or <a href="#term-content-labelling-node"><var>content of a labelling node</var></a> <strong>and</strong> the <a href="#term-current-node"><var>current node</var></a>'s computed role is an <a class="role-reference" href="#input">input</a> or a <a class="role-reference" href="#range">range</a> (or a subclass thereof), then return the current value of the input, as follows:
-            <ul>
-              <li id="step-element-embedded-control-textbox">
-                <p>
-                  If the embedded control has role <a class="role-reference" href="#textbox">textbox</a>, return its current value as determined by host language features, if they exist, or else determine its text alternative from its contents by following the process in <a href="step-element-contents">Step 5</a>.
-                </p>
-              </li>
-              <!--<li>If the embedded control has role menu <a class="role-reference" href="#button">button</a>, return the text alternative of the button.</li>-->
-              <li id="step-element-embedded-control-select">
-                <p>
-                  If the embedded control has a <a class="role-reference" href="#combobox">select</a> role (e.g., <rref>listbox</rref> or <rref>combobox</rref>), determine text alternatives for the current user-input text value (via host language semantics for the selection element or as the current value of the first descendent element with a <a class="role-reference" href="#textbox">textbox</a> role) and any selected descendent <a class="role-reference" href="#option">option</a> elements (determined via host language semantics or via running this algorithm on option elements with the <code>aria-selected="true"</code> state).  Return these values, concatenated in order, separated by spaces.
-                </p>
-              </li>
-              <li id="step-element-embedded-control-range">
-                <p>
-                  If the embedded control has a <a class="role-reference" href="#range">range</a> role (e.g., a <a class="role-reference" href="#spinbutton">spinbutton</a> or <a class="role-reference" href="#slider">slider</a>):
-                </p>
-                <ul>
-                  <li>If the <code>aria-valuetext</code> property is present, return its value, </li>
-                  <li>Otherwise, if the <code>aria-valuenow</code> property is present, return its value,</li>
-                  <li>Otherwise, use the current value as specified by a host language feature. </li>
-                </ul>
-              </li>
-            </ul>
-            <div><details>
-              <summary>Example:</summary>
-              <p>Consider a <a class="role-reference" href="#checkbox">check box</a> label that contains a text input field: "Remind me in [input] minutes". If the user has entered "5" for the embedded <a class="role-reference" href="#textbox">textbox</a>, the complete label is "Remind me in 5 minutes", e.g.: </p>
-              <pre class="example highlight"><code>&lt;div role="checkbox" aria-checked="false" &gt;Remind me in &lt;span role="textbox" aria-multiline="false" contenteditable="true"&gt; 5 &lt;/span&gt; minutes&lt;/div&gt;</code></pre>
-            </details></div>
-            <p class="ednote">
-              (Amelia) The "current value" for custom widgets is normally represented with plain text content of component elements, but may also be represented with CSS generated content tied to a data attribute.  Native widgets represent the value with special properties; for example, an HTML <code>input</code> element of type <code>text</code> uses an IDL property to hold the current value, and can also have a placeholder value which appears in the text box when the current value is empty.  The current wording tries to incorporate all the possibilities; it will be complemented by specifics in the HTML-AAM specification.
-            </p>
-            <p class="ednote">
-              (Amelia) Various changes have been made to the original text (which stems from ARIA 1.0), to reference the abstract superclass roles wherever appropriate.  I have also removed any mention of a "selected menuitem" within a menu as an example of a user-input widget with a changeable value.  It's inclusion did not seem to be consistent with the concept of menus as a collection of distinct commands (rather than as a selection).
-            </p>
-          </li>
-          <li id="step-element-label">
-            Otherwise, if computing a <a class="termref" data-lt="accessible name">name</a>, and if the <a href="#term-current-node"><var>current node</var></a> has a non-empty <code>aria-label</code> <a class="termref">attribute</a>, return the value of <code>aria-label</code>.
-            <div><details>
-              <summary>Comment and Example:</summary>
-              <p>
-                Because of the priority order presented here, an <code>aria-label</code> value is normally not used for that element's name if an <code>aria-labelledby</code> attribute is present.  However, the <code>aria-label</code> value may be incorporated in the name if the element itself is recursively referenced by its own <code>aria-labelledby</code> attribute.  When the text alternative algorithm is run recursively on the element, it is treated as a <a href="#term-labelling-node"><var>labelling node</var></a> and <code>aria-labelledby</code> is skipped.  This allows authors to concatenate the text of a visible label with additional alternative text. 
-              </p>
-              <p>The following example shows the interaction of <code>aria-labelledby</code> and <code>aria-label</code> when a <a class="termref">node</a> has an  <code>aria-labelledby</code> that refers to itself.  The <code>&lt;span role="button"&gt;</code> elements have the <a class="termref">accessible names</a> "Delete Documentation.pdf" and "Delete HolidayLetter.pdf", respectively.</p>
-                <pre class="example highlight"><code>&lt;h1&gt;Files&lt;/h1&gt;
-&lt;ul&gt;
-&lt;li&gt;
-  &lt;a id=&quot;file_row1&quot; href=&quot;./files/Documentation.pdf&quot;&gt;Documentation.pdf&lt;/a&gt;
-  <strong>&lt;span role=&quot;button&quot; tabindex=&quot;0&quot; id=&quot;del_row1&quot; aria-label=&quot;Delete&quot; aria-labelledby=&quot;del_row1 file_row1&quot;&gt;✖&lt;/span&gt;</strong>
-&lt;/li&gt;
-&lt;li&gt;
-  &lt;a id=&quot;file_row2&quot; href=&quot;./files/HolidayLetter.pdf&quot;&gt;HolidayLetter.pdf&lt;/a&gt;
-  <strong>&lt;span role=&quot;button&quot; tabindex=&quot;0&quot; id=&quot;del_row2&quot; aria-label=&quot;Delete&quot; aria-labelledby=&quot;del_row2 file_row2&quot;&gt;✖&lt;/span&gt;</strong>
-&lt;/li&gt;
-&lt;/ul&gt;</code></pre>
+    <p>The text alternative computation is used to generate both the <a class="termref">accessible name</a> and <a class="termref">accessible description</a>. There are different rules provided for several different types of <a class="termref">elements</a>, <a class="termref" data-lt="node">nodes</a>, and combinations of markup. Text alternatives are built up, when appropriate, from all the relevant content contained within an <a class="termref">element</a>. This is accomplished via steps 2B and 2F, which are recursive, using the full set of rules to retrieve text from its own children or nodes it references. </p>
+    <p>The purpose of the computation is to create a <a class="termref">perceivable</a> label or description for alternative presentations, in the form of a flat string of space separated textual tokens. </p>
+    <section id="terminology">
+      <h4>Terminology</h4>
+      <dl>
+        <dt>Root node</dt>
+        <dd>The <abbr title="Document Object Model">DOM</abbr> <a class="termref">node</a> or <a class="termref">element</a> for which the text alternative is sought.</dd>
+        <dt>Current node</dt>
+        <dd>The <abbr title="Document Object Model">DOM</abbr> <a class="termref">node</a> currently traversed to compute the <code>root node</code>'s text equivalent.  Initially, the <code>current node</code> is the <code>root node</code>, but at later stages is either some descendant of the <code>root node</code>, or another referenced node.</dd>
+        <dt>Flat string</dt>
+        <dd>A string of characters where all carriage returns, newlines, tabs, and form-feeds are replaced with a single space, and multiple spaces are reduced to a single space.  The string contains only character data; it does not contain any markup.  </dd> 
+        <dt>Total Accumulated text</dt>
+        <dd>The text equivalent computed up to, but not including the <code>current node</code>.</dd>
+        <dt>Accumulated text</dt>
+        <dd>Text accumulated at a step or sequence of steps described below.  It is temporary storage for those steps.</dd>
+        <dt>Result</dt>
+        <dd>The text equivalent computed at one of the steps described below.</dd>
+        <dt>Append the result, without a space, to X</dt>
+        <dd>
+          <ul>
+            <li>If X is empty, copy the <code>result</code> to X.</li>
+            <li>If X is non-empty, copy the <code>result</code> to the end of X.</li>
+          </ul>
+        </dd>
+        <dt>Append the result, with a space, to X</dt>
+        <dd>
+          <ul>
+            <li>If X is empty, copy the <code>result</code> to X.</li>
+            <li>If X is non-empty, add a space to the end of X and then copy the <code>result</code> to X after the space.</li>
+          </ul>
+        </dd>
+        <dt>Prepend result, without a space, to X</dt>
+        <dd>
+          <ul>
+            <li>If X is empty, copy the <code>result</code> to X.</li>
+            <li>If X is non-empty, copy the <code>result</code> to the start of X.</li>
+          </ul>
+        </dd>
+        <dt>Prepend the result, with a space, to X</dt>
+        <dd>
+          <ul>
+            <li>If X is empty, copy the <code>result</code> to X.</li>
+            <li>If X is non-empty, copy the <code>result</code> to the start of X, and add a space after the copy.</li>
+          </ul>
+        </dd>
+      </dl>
+    </section>
+      <p>The text alternative for a given element is computed as follows:</p>
+      <ol>
+        <li id="step1">Initialize:  Set the <code>root node</code> to the given element, the <code>current node</code> to the <code>root node</code>, and the <code>total accumulated text</code> to the empty string ("").</li>
+        <li id="step2">Compute the text alternative for the <code>current node</code>:
+          <ol>
+            <li id="step2A">If the <code>current node</code> is <a class="termref">hidden</a> <strong>and is not</strong> referenced by <code>aria-labelledby</code> or <code>aria-describedby</code>, nor referenced by a native host language text alternative <a class="termref">element</a> or <a class="termref">attribute</a>, return the empty string.
+              <div><details>
+                <summary>Comment:</summary>
+                <p>By default, <a class="termref">assistive technologies</a> do not relay hidden information, but an author can explicitly override that and include hidden text as part of the <a class="termref">accessible name</a> or <a class="termref">accessible description</a> by using <code>aria-labelledby</code> or <code>aria-describedby</code>. </p>
               </details></div>
-          </li>
-          <li id="step-element-native">Otherwise, if host language semantics for the <a href="#term-current-node"><var>current node</var></a> provide an <a class="termref">attribute</a> that defines a text alternative for the name or description, as appropriate, return that attribute's value as a <code>flat string</code>.  If the host language semantics define another <a class="termref">element</a> as the text alternative name or description, generate a text alternative from that element by  <a href="#mapping_additional_nd_te_element">Text Alternative for an Element</a> algorithm, with the referenced element as the <a href="#term-current-node"><var>current node</var></a> and as a <a href="#term-labelling-node"><var>labelling node</var></a>, unless that element has been explicitly marked as presentational (<code>role="presentation"</code> or <code>role="none"</code>) by the author.
-            <p class="ednote">
-              (Amelia) I'm not sure how much I've changed the wording taken "from second note in <a href="https://www.w3.org/WAI/PF/Group/track/issues/522">ISSUE-522</a>", which I can't access.  However, the changes were made for two reasons: make it clear that a host-language labelling relationship to another element causes a recursive processing of the algorithm; make it clear that alternative text elements (such as SVG's title/desc) that by default have no role are not excluded.
-            </p>
-            <div><details>
-              <summary>Comment:</summary>
-              <p>
-                For example, in <abbr title="Hypertext Markup Language">HTML</abbr>, the <code>img</code> element's <code>alt</code> attribute defines a text alternative string, and the <code>label</code> element provides text for the referenced form element.  In <abbr title="Scalable Vector Graphics">SVG</abbr>, the <code>desc</code> and <code>title</code> elements provide a description and a label, respectively, for their parent element. 
-              </p>
-            </details></div>
-          <li id="step-element-contents">Otherwise, if the <a href="#term-current-node"><var>current node</var></a> is <strong>not</strong> the <a href="#term-original-node"><var>original node</var></a>, <strong>or</strong> if computing an <a>accessible name</a> and the <a href="#term-current-node"><var>current node</var></a>'s computed <a class="termref">role</a> allows "Name From: contents":
-            <ol>
-              <li id="step-element-contents-css">
-                <p>
-                Follow the <a href="#mapping_additional_nd_te_css-insert">algorithm for inserting <abbr title="Cascading Style Sheets">CSS</abbr>-generated text nodes</a> for the <a href="#term-current-node"><var>current node</var></a> into its child content.
-                </p>
+            </li>
+            <li id="step2B">Otherwise:
+              <ul>
+                <li>if computing a <a class="termref" data-lt="accessible name">name</a>, and the <code>current node</code> has a non-empty <code>aria-labelledby</code> <a class="termref">attribute</a>, and the <code>current node</code> is not already part of an <code>aria-labelledby</code> traversal, process its IDREFs in the order they occur: </li>
+                <li>or, if computing a <a class="termref" data-lt="accessible description">description</a>, and the <code>current node</code> has a non-empty <code>aria-describedby</code> <a class="termref">attribute</a>, and the <code>current node</code> is not already part of an <code>aria-describedby</code> traversal, process its IDREFs in the order they occur: 
+                  <ol>
+                    <li id="step2B.i">Set the <code>accumulated text</code> to the empty string.</li>
+                    <li id="step2B.ii">For each IDREF:
+                      <ol>
+                        <li id="step2B.ii.a">Set the <code>current node</code> to the node referenced by the IDREF.</li>
+                        <li id="step2B.ii.b">Compute the text alternative of the <code>current node</code> beginning with step 2. Set the <code>result</code> to that text alternative.</li>
+                        <li id="step2B.ii.c">Append the <code>result</code>, with a space, to the <code>accumulated text</code>.</li>
+                      </ol>
+                    </li>
+                    <li id="step2B.iii">Return the <code>accumulated text</code>.</li>
+                  </ol>
+                </li>
+              </ul>
+              <div><details>
+                <summary>Example:</summary>
+                <p>The following example shows the meaning of the clause "&#8230; and the <code>current node</code> is not already part of an <code>aria-labelledby</code> traversal &#8230;" .</p>
+                <ul>
+                  <li><code>element1</code>'s <a class="termref">accessible name</a> is "hello" because this is a first traversal of its <code>aria-labelledby</code>, leading to <code>element3</code>.</li>
+                  <li><code>element2</code> has no <a class="termref">accessible name</a>.  The computation involves a first traversal of its <code>aria-labelledby</code> leading to <code>element1</code>, but <code>element1</code>'s  <code>aria-labelledby</code> is not subsequently followed. </li>
+                </ul>
+                <pre class="example highlight"><code>&lt;element1 id="el1" aria-labelledby="el3" /&gt;
+&lt;element2 id="el2" aria-labelledby="el1" /&gt;
+&lt;element3 id="el3"&gt; hello &lt;/element3&gt;</code>
+                </pre>
+              </details></div>
+            </li>
+            <li id="step2C">Otherwise, if computing a <a class="termref" data-lt="accessible name">name</a>, and if the <code>current node</code> has a non-empty <code>aria-label</code> <a class="termref">attribute</a>:
+              <ul>
+                <li>If traversal of the <code>current node</code> is due to recursion <strong>and</strong> the <code>current node</code> is an embedded control as defined in step 2E, ignore <code>aria-label</code> and skip to rule 2E.</li>
+                <li>Otherwise, return the value of <code>aria-label</code>.</li>
+              </ul>
+              <div><details>
+                <summary>Example:</summary>
+                  <p>The following example shows the interaction of <code>aria-labelledby</code> and <code>aria-label</code> when a <a class="termref">node</a> has an  <code>aria-labelledby</code> that refers to itself.  The <code>&lt;span role="button"&gt;</code> elements have the <a class="termref">accessible names</a> "Delete Documentation.pdf" and "Delete HolidayLetter.pdf", respectively.</p>
+                  <pre class="example highlight"><code>&lt;h1&gt;Files&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;a id=&quot;file_row1&quot; href=&quot;./files/Documentation.pdf&quot;&gt;Documentation.pdf&lt;/a&gt;
+    <strong>&lt;span role=&quot;button&quot; tabindex=&quot;0&quot; id=&quot;del_row1&quot; aria-label=&quot;Delete&quot; aria-labelledby=&quot;del_row1 file_row1&quot;&gt;&lt;/span&gt;</strong>
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;a id=&quot;file_row2&quot; href=&quot;./files/HolidayLetter.pdf&quot;&gt;HolidayLetter.pdf&lt;/a&gt;
+    <strong>&lt;span role=&quot;button&quot; tabindex=&quot;0&quot; id=&quot;del_row2&quot; aria-label=&quot;Delete&quot; aria-labelledby=&quot;del_row2 file_row2&quot;&gt;&lt;/span&gt;</strong>
+  &lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+                </details></div>
+            </li>
+            <li id="step2D">Otherwise, if the <code>current node</code>'s native markup provides an <a class="termref">attribute</a> or <a class="termref">element</a> that defines a text alternative, return that alternative as a <code>flat string</code>, unless the element is marked as presentational (<code>role="presentation"</code> or <code>role="none"</code>).
+              <p class="ednote">Above wording taken from second note in <a href="https://www.w3.org/WAI/PF/Group/track/issues/522">ISSUE-522</a>.</p>
+              <div><details>
+                <summary>Comment:</summary>
+                <p>For example, in <abbr title="Hypertext Markup Language">HTML</abbr>, the <code>img</code> element's <code>alt</code> attribute defines a text alternative string, and the <code>label</code> element provides text for the referenced form element.  In <abbr title="SVG2">SVG2</abbr>, the <code>desc</code> and <code>title</code> elements provide a description of their parent element. </p>
+              </details></div>
+            </li>
+            <li id="step2E">Otherwise, if the <code>current node</code> is a control embedded within the label of another <a class="termref">widget</a>, where the user can adjust the embedded control's value, then include the embedded control as part of the text alternative in the following manner:
+              <ul>
+                <li>If the embedded control has role <a class="role-reference" href="#textbox">textbox</a>, return its value.</li>
+                <li>If the embedded control has role menu <a class="role-reference" href="#button">button</a>, return the text alternative of the button.</li>
+                <li>If the embedded control has role <a class="role-reference" href="#combobox">combobox</a>, return the text alternative of the chosen <a class="role-reference" href="#option">option</a>.</li>
+                <li>If the embedded control has role <a class="role-reference" href="#range">range</a> (e.g., a <a class="role-reference" href="#spinbutton">spinbutton</a> or <a class="role-reference" href="#slider">slider</a>):
+                  <ul>
+                    <li>If the <code>aria-valuetext</code> property is present, return its value, </li>
+                    <li>Otherwise, if the <code>aria-valuenow</code> property is present, return its value,</li>
+                    <li>Otherwise, use the value as specified by a host language attribute. </li>
+                  </ul>
+                </li>
+              </ul>
+              <div><details>
+                <summary>Example:</summary>
+                <p>Consider a <a class="role-reference" href="#checkbox">check box</a> label that contains a text input field: "Flash the screen [input] times". If the user has entered "5" for the embedded <a class="role-reference" href="#textbox">textbox</a>, the complete label is "Flash the screen 5 times", e.g.: </p>
+                <pre class="example highlight"><code>&lt;div role="checkbox" aria-checked="false"&gt;Flash the screen &lt;span role="textbox" aria-multiline="false"&gt; 5 &lt;/span&gt; times&lt;/div&gt;</code></pre>
+              </details></div>
               </li>
-              <li id="step-element-contents-hidden">
-                <p>
-                  Exclude all child nodes of the <a href="#term-current-node"><var>current node</var></a> that are <a class="termref">hidden</a>,
-                  <strong>unless</strong> the <a href="#term-current-node"><var>current node</var></a> is <strong>also</strong> hidden itself.
-                </p>
-              </li>
-              <li id="step-element-contents-children">
-                <p>
-                  For each remaining child node of the <a href="#term-current-node"><var>current node</var></a>, in order&mdash;including child elements, DOM text nodes (even if only containing whitespace), and the inserted CSS-generated text nodes&mdash;calculate a text alternative by running the appropriate algorithm with the node as a <a href="#term-content-node"><var>content node</var></a> (if the <a href="#term-current-node"><var>current node</var></a> is the <a href="#term-original-node"><var>original node</var></a> or a <a href="#term-content-node"><var>content node</var></a>) or as <a href="#term-content-labelling-node"><var>content of labelling node</var></a> (if the <a href="#term-current-node"><var>current node</var></a> is a <a href="#term-labelling-node"><var>labelling node</var></a> or <a href="#term-content-labelling-node"><var>content of labelling node</var></a>).
-                </p>
-                <p>
-                  Before processing each child element, determine whether that element has been previously processed by this algorithm in the course of generating the text alternative for the <a href="#term-original-node"><var>original node</var></a>.  If it has, do not process the element a second time, but instead treat it as a hidden node.
-                </p>
-              </li>
-              <li id="step-element-contents-whitespace">
-                <p>
-                  Concatenate the text alternatives of the child content, in order. If the <a href="#term-current-node"><var>current node</var></a> is displayed (or would be displayed in visual media) with a line break before and after its content (e.g., <abbr title="Cascading Style Sheets">CSS</abbr> <code>block</code> or <code>list-item</code> display modes), append a space before and after the concatenated content; do not append spaces if the element is displayed inline.  Return the concatenated string as the text alternative for the <a href="#term-current-node"><var>current node</var></a>.
-                </p>
-              </li>
-            </ol>
-            <div><details>
-              <summary>Comment and Examples:</summary>
-              <p>
-                This step can apply recursively to child elements, resulting in text collected from all the elements in the <a href="#term-current-node"><var>current node</var></a>'s subtree, no matter how deep it is. However, any given descendant <a class="termref">element</a>'s text alternative may result from explicit labelling markup provided by the author, instead of from its subtree. 
-              </p>
-              <p>
-                Because it is a recursive algorithm, there is a potential for infinite loops. For this reason, both this step and <a href="step-element-ariaby">Step 1</a> require user agents to determine whether they have already processed a given element before processing it a second time. The following snippet of an HTML form shows two cases where this check prevents a loop:
-              </p>
-<pre class="example highlight"><code>&lt;label&gt;&lt;input type="number" name="count" min="0" required /&gt; 
-  Number of copies 
-  &lt;span&gt;(required)&lt;/span&gt;&lt;/label&gt;
-&lt;button type="submit"&gt;
-  &lt;img src="shopping-cart.svg" aria-labelledby="cart-label" /&gt; 
-  &lt;span id="cart-label"&gt;Add to Cart&lt;/span&gt;
-&lt;/button&gt;
-</code></pre>
-              <p>
-                The accessible name for the <code>input</code> element is derived from it's containing <code>label</code>, 
-                according to the native semantics of HTML.  
-                The label has no special attributes defining a name, 
-                so its text alternative will be derived from its contents.  
-                The first of those content nodes is the <code>input</code> element itself, 
-                but that will be skipped because it has already been processed.  
-                The text node and span that form the rest of the label contents will therefore be used for the input's name.
-              </p>
-              <p>
-                If CSS is used to hide the "(required)" text once the input has a valid value,
-                then that node will be excluded from the contents and therefore the name.
-                By default, <a class="termref">assistive technologies</a> do not relay hidden information, 
-                although an author can explicitly override that 
-                and include hidden text as part of the <a class="termref">accessible name</a> or <a class="termref">accessible description</a> 
-                by using <code>aria-labelledby</code> or <code>aria-describedby</code>, or other host language labelling mechanisms.  
-                A hidden labelling node will be used, as will its contents if required.
-              </p>
-              <p>
-                The submit button in the code snippet does not have any labelling attributes or elements. 
-                The button's name will therefore be derived from its contents, 
-                consistent with the <code>button</code> <a>role</a>.
-                The first content element (after a whitespace node) is an icon <code>img</code>, 
-                which is labelled "Add to Cart" by an adjacent <code>span</code>.  
-                The <code>span</code> is also a child of the <code>button</code>; 
-                however, it is not processed a second time because of the check in this step against duplicate contents.  
-                If the <code>span</code> had been before the <code>img</code> in the markup, 
-                the check at <a href="step-element-ariaby">Step 1</a> would have prevented the duplication, 
-                prior to processing the icon's <code>aria-labelledby</code> attribute.  
-                Either way, the button's accessible name would be simply the string "Add to Cart".  
-              </p>
-              <p>
-                On smaller screen sizes, the visible text button label may be hidden,
-                so the button's only visible content is the icon.
-                In that case, the label will be omitted from the button's contents,
-                but it's text will still be used as alternative text for the icon.
-              </p>
-              <p>
-                The requirement to insert whitespace before and after the content string, conditional upon the element's display mode, reflects the implied word breaks created by block styling, without introducing inappropriate word breaks within inline content.  In the following snippet, the accessible name for the checkbox would be "Make this the topmost element" (with no space after "top"), but the accessible names for both buttons would be "Top it Up"&mdash;in the first case because of the explicit whitespace nodes, but in the second case because of the implicit formatting breaks (assuming the normal block styling of <code>p</code> elements in HTML was not altered).
-              </p>
-<pre class="example highlight"><code>&lt;label&gt; &lt;input type="checkbox" /&gt; Make this the &lt;em&gt;top&lt;/em&gt;most element&lt;/label&gt;
-&lt;button&gt;&lt;em&gt;Top&lt;/em&gt; &lt;em&gt;it&lt;/em&gt; &lt;em&gt;Up&lt;/em&gt;&lt;/button&gt;
-&lt;button&gt;&lt;p&gt;Top&lt;/p&gt;&lt;p&gt;it&lt;/p&gt;&lt;p&gt;Up&lt;/p&gt;&lt;/button&gt;
-</code></pre>
-            </details></div>
-            <p class="ednote">
-              The check for hidden content has been moved here, instead of as the first step of the element algorithm, because it only applies when dealing with contents, not labelling nodes, and because we need to ensure that an element that is skipped (as contents) because it is hidden will <strong>not</strong> be skipped again (as a duplicate) if it is referenced in a labelling relationship.  Putting the test at this point in the algorithm also helps deal with the HTML <code>details</code> element and arbitrary text in SVG files, for which text nodes may be hidden even though their parent element is displayed.  The check for whether the current node is also hidden allows hidden labelling nodes to work as expected (even though their contents would be hidden as well).
-            </p>
-          </li>
-          <li id="step-element-tooltip">
-            Otherwise, if host language features provide content for the <a href="#term-current-node"><var>current node</var></a> that is normally displayed as a tooltip, return the tooltip's text value as a flat string, padded before and after with spaces. 
-              <p class="ednote">
-                (Amelia)  The tooltip may therefore end up as the accessible name or as the accessible description, depending on what other alternative text is provided.  The check against duplicate description content prevents it from being both. The use of tooltips as descriptions is something we've discussed for the SVG accessibility mappings.  Tooltips can be important text content that the author provided to pointer users, and it would ideally therefore be accessible to AT users.  However, it is additional content, that should not replace the visible text content or proper label.  I have also changed the wording from "tooltip attribute" to allow for other host language features (i.e., the <code>title</code> child element in SVG).
-              </p>
-            <div><details>
-              <summary>Comment and Example:</summary>
-              <p>
-                Tooltip are only used as an accessible name if no other labelling mechanism has been provided, and the element's role does not support names from content.  Because tooltips are usually written as supplemental information for users of visual displays and pointer input, they are more suitable as additional descriptions rather than as labels or alternative text.
-              </p>
-              <p>
-                If the tooltip content should be presented in addition to a more detailed description, the <code>aria-describedby</code> attribute can be used to reference the existing element (and its tooltip) in addition to another element (with a full description).  For example, when a tooltip is used to provide an extra punchline to a visual joke, it should be appended to a description of the graphical content, as in the following example:
-              </p>
-<pre class="example highlight"><code>&lt;img id="image" src="sleepy-kitty.jpg" 
-    aria-describedby="description image"
-    alt="I hate Mondays"
-    title="also applies to Tuesdays, Wednesdays, Thursdays, and Fridays" /&gt;
-&lt;p id="description" class="off-screen"&gt;
-  Photograph of a messy bed, with a cat-sized lump under the blankets and a cat's tail peeking out.
-  Text says 'I hate Mondays…'.
-&lt;/p&gt;
-</code></pre>
-              <p>The graphic would have the accessible name "I hate Mondays",
-                based on the native alternative text attribute (<code>alt</code>) for the HTML <code>img</code> element.
-                The accessible description, concatenated from the description paragraph and the tooltip defined by the HTML <code>title</code> attribute,  would be:
-              </p>
-              <blockquote>
-                Photograph of a messy bed, with a cat-sized lump under the blankets and a cat's tail peeking out.
-  Text says 'I hate Mondays…'. also applies to Tuesdays, Wednesdays, Thursdays, and Fridays
-              </blockquote>
-            </details></div>
-          </li>
-        </ol>
-  
-  </section>
-  <section id="mapping_additional_nd_te_node">
-    <h4>Text Alternative for a Text Node</h4>
-    
-    <p>  
-      The text alternative for a DOM text node is its text content, including leading or trailing whitespace characters, converted to a flat string.
-    </p>
-  </section>
-  <section id="mapping_additional_nd_te_css-insert">
-    <h4>Inserting CSS-Generated Text Nodes</h4>
-    
-    <p>
-      When generating alternative text from the content of an element, the computations should proceed as if text nodes existed in the DOM tree for CSS-generated content, as follows:
-    </p>
-    <ul>
-      <li>
-        <p>
-          If the <a href="#term-current-node"><var>current node</var></a> is a list element (those for which the computed value of either the <a href="http://www.w3.org/TR/CSS2/generate.html#propdef-list-style-type"><code>list-style-type</code></a> or <a href="http://www.w3.org/TR/CSS2/generate.html#propdef-list-style-image"><code>list-style-image</code></a> <abbr title="Cascading Style Sheets">CSS</abbr> properties is something other than <code>none</code>), a list marker node should be inserted <strong>before</strong> any child content (including text nodes) in the <abbr title="document object model">DOM</abbr>.
-        </p>
-      </li>
-      <li>
-        <p>
-          If the <a href="#term-current-node"><var>current node</var></a> has a <code>before</code> pseudo-element whose <code>content</code> property is not <code>normal</code> and whose <code>display</code> property is not <code>none</code>, a corresponding pseudo-element node should be inserted <strong>after</strong> any list marker node but <strong>before</strong> any child content (including text nodes) in the <abbr title="document object model">DOM</abbr>.
-        </p>
-      </li>
-      <li>
-        <p>
-          If the <a href="#term-current-node"><var>current node</var></a> has an <code>after</code> pseudo-element whose <code>content</code> property is not <code>normal</code> and whose <code>display</code> property is not <code>none</code>, a corresponding pseudo-element node should be inserted <strong>after</strong> any child content (including text nodes) in the <abbr title="document object model">DOM</abbr>.
-        </p>
-      </li>
-    </ul>
-  </section>
-  <section id="mapping_additional_nd_te_css-alt">
-    <h4>Text Alternative for CSS-Generated Content</h4>
-    <p>
-      The text alternative for CSS-generated content is generated as follows:
-    </p>
-    <ul>
-      <li>
-        <p>
-          For list marker nodes, return text equivalent to the <a href="http://www.w3.org/TR/css-counter-styles-3/#counter-style-speak-as"><code>speak-as</code></a> value defined for the list counter system as described in CSS Counter Styles Level 3 [[CSS-COUNTER-STYLES-3]].  If the user agent does not support <code>speak-as</code>, the following rules should be used:
-        </p>
-        <ul>
-          <li>
-            When <code>list-style-image</code> is not <code>none</code>, or when <code>list-style-type</code> is <code>disc</code>, <code>circle</code>, or <code>square</code>, use a standard user agent representation of a bullet, such as the character U+2022 (&#x2022;).
-          </li>
-          <li>
-            For all other <code>list-style-type</code> values, use the actual text characters created for the marker.
-          </li>
-        </ul>
-        </p>
-          In all cases, the list marker is padded before and after with spaces.  
-        </p>
-      </li>
-      <li>
-        <p>
-          For pseudo-element nodes, 
-        </p>
-        <ul>
-          <li>
-            If the pseudo-element has a property that defines alternative text content, use that alternative text content converted to a flat string.  
-          </li>
-          <li>
-            Otherwise, if the pseudo-element's content property results in the generation of text characters, use that text content converted to a flat string.
-          </li>
-          <li>
-            If the pseudo-element's content consists only of an image or an empty string, and no alternative text is provided, return an empty string.
-          </li>
-        </ul>
-        <p>
-          If the result of the above steps is not an empty string, and the pseudo-element node is displayed with a line break before and after its content (e.g., <abbr title="Cascading Style Sheets">CSS</abbr> <code>block</code> display mode), append a space before and after the text; do not append a space if the element is displayed inline.  Return the resulting string as the text alternative for the node.
-        </p>
-      </li>
-    </ul>
-    <div class="note">
-      <p>
-        CSS Counter Styles Level 3 introduced custom counter styles and the <a href="http://www.w3.org/TR/css-counter-styles-3/#counter-style-speak-as"><code>speak-as</code> descriptor</a>.  The <code>speak-as</code> option provides a way for decorative characters (e.g., circled numbers: ❶, ❷, ❸) to be replaced with a simpler alternative (e.g., regular numbers: 1, 2, 3) for speech rendering or other plain text presentations [[CSS-COUNTER-STYLES-3]].
-      </p>
-      <p>
-        The wording regarding alternative text for CSS-generated content is intentionally open-ended, as <a href="https://drafts.csswg.org/css-content/#alt-property">proposals for this feature in CSS are still in the early draft stage</a>.
-      </p>
-    </div>
-    <p class="ednote">
-      The information regarding alternative text for CSS-generated content is new.  In addition, I have simplified the rules for list markers to always add whitespace, without needing to check whether the marker already includes a space or not; the whitespace normalization rules for "flat strings" should take care of duplicate consecutive spaces.  For pseudo-elements, however, I've added in the check for inline versus block content, with whitespace adjusted accordingly.
-    </p>
-  </section>
+            <li id="step2F">Otherwise, if the <code>current node's</code> <a class="termref">role</a> allows "Name From: contents", or if the <code>current node</code> is referenced by <code>aria-labelledby</code>, <code>aria-describedby</code>, or is a native host language text alternative <a class="termref">element</a>:
+              <ol>
+                <li id="step2F.i">Set the <code>accumulated text</code> to the empty string.</li>
+                <li id="step2F.ii">Check for <abbr title="Cascading Style Sheets">CSS</abbr> generated textual content associated with the <code>current node</code> and include it in the <code>accumulated text</code>:
+                  <ul>
+                    <li>The "bullet" or "number" characters associated with a list item are not present in the <abbr title="Document Object Model">DOM</abbr>, but are provided by the <a class="termref" data-lt="user agent">user agent's</a> style engine.  If the <abbr title="Cascading Style Sheets">CSS</abbr> <a href="http://www.w3.org/TR/CSS2/generate.html#propdef-list-style-type"><code>list-style-type</code></a> is not <code>"none"</code>, <a class="termref">user agents</a> MUST prepend the list item indicator text to the item's text.  If the list item indicator text includes a space, prepend the indicator text without a space; otherwise prepend with a space.</li>
+                    <li>Similarly, the <abbr title="Cascading Style Sheets">CSS</abbr> <a href="http://www.w3.org/TR/CSS2/generate.html#before-after-content"><code>:before</code> and <code>:after</code></a> pseudo elements can provide textual content for <a class="termref">elements</a> that have a content model.
+                      <ul>
+                        <li>For <code>:before</code> pseudo elements, <a class="termref">User agents</a> MUST prepend <abbr title="Cascading Style Sheets">CSS</abbr> textual content, without a space, to the textual content of the <code>current node</code>. </li>
+                        <li>For <code>:after</code> pseudo elements, <a class="termref">User agents</a> MUST append <abbr title="Cascading Style Sheets">CSS</abbr>  textual content, without a space, to the textual content of the <code>current node</code>. </li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+                <li id="step2F.iii">For each child node of the <code>current node</code>:
+                  <ol>
+                    <li id="step2F.iii.a">Set the <code>current node</code> to the child node.</li>
+                    <li id="step2F.iii.b">Compute the text alternative of the  <code>current node</code> beginning with step 2.  Set the <code>result</code> to that text alternative.</li>
+                    <li id="step2F.iii.c">Append the <code>result</code> to the <code>accumulated text</code>. </li>
+                  </ol>
+                  <p class="ednote">(Joseph) the last step above needs work since there are cases where you "append with a space" and others where you "append without a space".  Example of the latter:  <code>&lt;label&gt; &lt;input type="checkbox"&gt; Make this the &lt;em&gt;top&lt;/em&gt;most element&lt;/label&gt;</code>.  The result is "Make this the topmost element", not "Make this the top most element" &#8211; do not append a space after "top".</p>
+                </li>
+                <li id="step2F.iv">Return the <code>accumulated text</code>.</li>
+              </ol>
+              <p><strong>Important</strong>:  Each <a class="termref">node</a> in the subtree is consulted only once. If text has been collected from a descendant, but is referenced by another IDREF in some descendant node, then that second, or subsequent, reference is not followed. This is done to avoid infinite loops.  </p>
+              <div><details>
+                <summary>Comment:</summary>
+                <p>This step can apply to the child nodes themselves, which means the computation is recursive and results in text collected from all the elements in the <code>current node</code>'s subtree, no matter how deep it is. However, any given descendant <a class="termref">node</a>'s text alternative can result from higher precedent markup described in steps B through D above, where "Namefrom: author" attributes provide the text alternative for the entire subtree. </p>
+              </details></div>
+            </li>
+            <li id="step2G">Otherwise, if the <code>current node</code> is a <a class="termref">Text node</a>, return its textual contents.</li>
+            <li id="step2H">Otherwise, if the <code>current node</code> has a tooltip <a class="termref">attribute</a>, return its value. 
+              <div><details>
+                <summary>Comment:</summary>
+                <p>Tooltip attributes are used only if nothing else, including subtree content, has provided results. </p>
+                <p class="ednote">(Joseph) Define "tooltip attribute"?</p>
+              </details></div>
+            </li>
+          </ol>
+          <p>Append the <code>result</code> of each step above, with a space, to the <code>total accumulated text</code>.</p>
+        </li>
+      </ol>
+      <p>After all steps are completed, the <code>total accumulated text</code> is used as the <a class="termref">accessible name</a> or <a class="termref">accessible description</a> of the <a class="termref">element</a> that initiated the computation.</p>
     </section>
   </section>
   <section>
     <h3>Accessible Name and Description Mapping</h3>
-    <p>The algorithm generates a <code>flat text string</code> for each element, which is then trimmed of excess whitespace.  The result is a single flat string name or description associated with the <a class="termref">element</a> for which the text alternative computation was executed.  The computed string is used to set the <a class="termref">accessible name</a> or <a class="termref">accessible description</a> <a class="termref">property</a> of the <a class="termref">accessible object</a> corresponding to the <a class="termref">element</a>.  The specifics of  each <a class="termref">accessibility <abbr title="Application Programming Interfaces">API</abbr></a> mapping is given in the following table.</p>
+    <p>Each step of the algorithm generates a <code>flat text string</code>.  An implementation trims the text and concatenates it with the text alternative computed by previous steps.  The result is a single flat string name or description associated with the <a class="termref">element</a> for which the text alternative computation was executed.  The computed string is used to set the <a class="termref">accessible name</a> or <a class="termref">accessible description</a> <a class="termref">property</a> of the <a class="termref">accessible object</a> corresponding to the <a class="termref">element</a>.  The specifics of  each <a class="termref">accessibility <abbr title="Application Programming Interfaces">API</abbr></a> mapping is given in the following table.</p>
     <table id="nameMappingTable">
     <caption>
       Accessible name and accessible description mapping table
@@ -668,7 +416,7 @@
     <ul>
       <li>Buttons such as the "Play" button in a media player whose label can switch between "Pause" and "Play" depending on its state. </li>
       <li>On/Off switches whose label changes between "On" and "Off". </li>
-      <li>Labels with embedded controls as described in <a href="#step-element-embedded-control">step 2 of the text alternative algorithm for an element</a>, since the user can change the value of the embedded control. </li>
+      <li>Labels with embedded controls as described in step 2E above, since the user can change the value of the embedded control. </li>
       <li>Situations where description text is loaded or set only when needed, such as when the mouse hovers over an object, or the object gains focus. </li>
     </ul>
     <p>The following table lists the events or notifications provided by Accessibility <abbr title="Application Programming Interfaces">APIs</abbr> if the name or description changes. <a class="termref">Assistive technologies</a> can make use of these events to provide the current label as needed. </p>

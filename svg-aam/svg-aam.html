@@ -116,6 +116,13 @@
        "FPWD": "http://www.w3.org/TR/html-aam-1.0/",
        "REC": "http://www.w3.org/TR/wai-aria-implementation/"
     },
+    graphicsMappingModURLs: {
+       "ED": "http://rawgithub.com/w3c/aria/master/graphics-aam/graphics-aam.html",
+       "WD" : "http://www.w3.org/TR/graphics-aam-1.0/",
+       "FPWD": "http://www.w3.org/TR/graphics-aam-1.0/",
+       "REC": "http://www.w3.org/TR/graphics-aam/"
+    },
+
 
     localBiblio: biblio,
     
@@ -327,12 +334,24 @@ var mappingTableLabels = {
       It defines the core roles, states, and properties.
     </li>
     <li>
+      <cite><a href="http://www.w3.org/TR/graphics-aria-1.0/">WAI-ARIA Graphics Module</a></cite> [[GRAPHICS-ARIA]],
+      a planned <abbr title="World Wide Web Consortium">W3C</abbr> recommendation that defines graphics roles, states, and properties not included in <cite><a href="http://www.w3.org/TR/wai-aria-1.1/">Accessible Rich Internet Applications (WAI-ARIA) 1.1</a></cite> [[WAI-ARIA]].
+    </li>
+    <li>
       <cite><a href="http://www.w3.org/TR/core-aam-1.1/">Core Accessibility API Mappings</a></cite> specification [[CORE-AAM]], 
       which expresses how <abbr title="Accessible Rich Internet Applications">WAI-ARIA</abbr> 
       <a href="#dfn-role" class="termref">roles</a>, <a href="#dfn-state" class="termref">states</a>, and <a href="#dfn-property" class="termref">properties</a> 
       should be supported in user agents 
       using platform accessibility <abbr title="Application Programming Interfaces">APIs</abbr>.
     </li>
+    <li>
+      <cite><a href="http://www.w3.org/TR/graphics-aam-1.0">Graphics Accessibility API Mappings</a></cite>[[GRAPHICS-AAM]], a planned <abbr title="World Wide Web Consortium">W3C</abbr> recommendation,
+      which expresses how <cite><a href="http://www.w3.org/TR/graphics-aria-1.0/">WAI-ARIA Graphics Module</a></cite> [[GRAPHICS-ARIA]]
+      <a href="#dfn-role" class="termref">roles</a>, <a href="#dfn-state" class="termref">states</a>, and <a href="#dfn-property" class="termref">properties</a>
+      should be supported in user agents
+      using platform accessibility <abbr title="Application Programming Interfaces">APIs</abbr>.
+    </li>
+
     <li>
       <cite><a href="http://www.w3.org/TR/accname-aam-1.1/">Accessible Name and Description: Computation and API Mappings 1.1</a></cite> [[ACCNAME-AAM]], 
       which outlines the specific steps user agents should follow 
@@ -1060,9 +1079,9 @@ var mappingTableLabels = {
         map to WAI-ARIA roles and platform accessibility APIs 
         based on their native host language semantics,
         including which WAI-ARIA roles may be applied. 
-        This section refers directly to the 
+        This section refers directly to both the 
         <a class="core-mapping" href="#mapping_role_table"><code>Role Mappings</code></a>
-        in the Core Accessibility API Mappings specification,
+        in the Core Accessibility API Mappings [[!CORE-AAM]] specification and the <a class="graphics-mapping" href="#mapping_role_table"><code>Role Mappings</code></a> in the Graphics Accessibility API Mappings [[!GRAPHICS-AAM]] specification,
         which define how WAI-ARIA roles are mapped to platform accessibility APIs. 
       </p>
 <div class="table-container">
@@ -1094,7 +1113,8 @@ var mappingTableLabels = {
   </td>
   <td>
     any role;
-    see <a class="core-mapping" href="#mapping_role_table"><code>Role Mappings</code></a>
+    see the <a class="core-mapping" href="#mapping_role_table"><code>Core Accessibility API Role Mappings</code></a>
+    and the <a class="graphics-mapping" href="#mapping_role_table"><code>Graphics Accessibility API Role Mappings</code></a>
   </td>
 </tr>
 <tr id="role-map-animate">
@@ -1138,9 +1158,9 @@ var mappingTableLabels = {
     Follow the recommendations for <a class="html-mapping" href="#el-canvas">the HTML canvas element</a>
       in the HTML Accessibility API Mappings specification [[!HTML-AAM]].
   </td>
-  <td>
-    any role;
-    see <a class="core-mapping" href="#mapping_role_table"><code>Role Mappings</code></a>
+   <td>
+     any role;
+    see the <a class="core-mapping" href="#mapping_role_table"><code>Core Accessibility API Role Mappings</code></a>    and the <a class="graphics-mapping" href="#mapping_role_table"><code>Graphics Accessibility API Role Mappings</code></a>
   </td>
 </tr>
 <tr id="role-map-circle">
@@ -1159,8 +1179,8 @@ var mappingTableLabels = {
     </p>
   </td>
   <td>
-    any role;
-    see <a class="core-mapping" href="#mapping_role_table"><code>Role Mappings</code></a>
+   any role;
+    see the <a class="core-mapping" href="#mapping_role_table"><code>Core Accessibility API Role Mappings</code></a>    and the <a class="graphics-mapping" href="#mapping_role_table"><code>Graphics Accessibility API Role Mappings</code></a>
   </td>
 </tr>
 <tr id="role-clippath">
@@ -1216,8 +1236,9 @@ var mappingTableLabels = {
     </p>
   </td>
   <td>
-    any role;
-    see <a class="core-mapping" href="#mapping_role_table"><code>Role Mappings</code></a>
+   any role;
+    see the <a class="core-mapping" href="#mapping_role_table"><code>Core Accessibility API Role Mappings</code></a>    and the <a class="graphics-mapping" href="#mapping_role_table"><code>Graphics Accessibility API Role Mappings</code></a>
+
   </td>
 </tr>
 <tr id="role-map-feblend">
@@ -1360,8 +1381,8 @@ var mappingTableLabels = {
     otherwise, no <a class="termref" data-lt="accessible object">accessible object</a> created 
   </td>
   <td>
-    any role;
-    see <a class="core-mapping" href="#mapping_role_table"><code>Role Mappings</code></a>
+   any role;
+    see the <a class="core-mapping" href="#mapping_role_table"><code>Core Accessibility API Role Mappings</code></a>    and the <a class="graphics-mapping" href="#mapping_role_table"><code>Graphics Accessibility API Role Mappings</code></a>
   </td>
 </tr>
 <tr id="role-map-g">
@@ -1374,8 +1395,9 @@ var mappingTableLabels = {
     otherwise, no <a class="termref" data-lt="accessible object">accessible object</a> created
   </td>
   <td>
-    any role;
-    see <a class="core-mapping" href="#mapping_role_table"><code>Role Mappings</code></a>
+   any role;
+    see the <a class="core-mapping" href="#mapping_role_table"><code>Core Accessibility API Role Mappings</code></a>    and the <a class="graphics-mapping" href="#mapping_role_table"><code>Graphics Accessibility API Role Mappings</code></a>
+
   </td>
 </tr>
 <tr id="role-map-hatch">
@@ -1410,8 +1432,8 @@ var mappingTableLabels = {
     otherwise, no <a class="termref" data-lt="accessible object">accessible object</a> created
   </td>
   <td>
-    any role;
-    see <a class="core-mapping" href="#mapping_role_table"><code>Role Mappings</code></a>
+   any role;
+    see the <a class="core-mapping" href="#mapping_role_table"><code>Core Accessibility API Role Mappings</code></a>    and the <a class="graphics-mapping" href="#mapping_role_table"><code>Graphics Accessibility API Role Mappings</code></a>
   </td>
 </tr>
 <tr id="role-map-line">
@@ -1430,8 +1452,8 @@ var mappingTableLabels = {
     </p>
   </td>
   <td>
-    any role;
-    see <a class="core-mapping" href="#mapping_role_table"><code>Role Mappings</code></a>
+   any role;
+    see the <a class="core-mapping" href="#mapping_role_table"><code>Core Accessibility API Role Mappings</code></a>    and the <a class="graphics-mapping" href="#mapping_role_table"><code>Graphics Accessibility API Role Mappings</code></a>
   </td>
 </tr>
 <tr id="role-map-lineargradient">
@@ -1447,9 +1469,15 @@ var mappingTableLabels = {
 <td>no <a class="termref" data-lt="accessible object">accessible object</a> created</td>
 <td>no role may be applied</td>
 </tr>
-<tr id="role-map-meshgradient"><th><a class="element-reference" href="http://www.w3.org/TR/SVG2/pservers.html#MeshElement"><code>meshGradient</code></a></th>
-<td>no <a class="termref" data-lt="accessible object">accessible object</a> created</td>
-<td>no role may be applied</td>
+<tr id="role-map-mesh"><th><a class="element-reference" href="http://www.w3.org/TR/SVG2/pservers.html#MeshElement"><code>mesh</code></a></th>
+<td>
+   <a class="core-mapping" href="#role-map-img"><code title="attr-aria-role-img">img</code></a> role mapping
+    if the element meets the criteria for <a href="#include_elements">Including Elements in the Accessibility Tree</a>;
+    otherwise, no <a class="termref" data-lt="accessible object">accessible object</a> created</td>
+<td>
+    any role;
+    see the <a class="core-mapping" href="#mapping_role_table"><code>Core Accessibility API Role Mappings</code></a>    and the <a class="graphics-mapping" href="#mapping_role_table"><code>Graphics Accessibility API Role Mappings</code></a>
+</td>
 </tr>
 <tr id="role-map-meshpatch"><th><a class="element-reference" href="http://www.w3.org/TR/SVG2/pservers.html#MeshpatchElement"><code>meshPatch</code></a></th>
 <td>no <a class="termref" data-lt="accessible object">accessible object</a> created</td>
@@ -1483,8 +1511,8 @@ var mappingTableLabels = {
     </p>
   </td>
   <td>
-    any role;
-    see <a class="core-mapping" href="#mapping_role_table"><code>Role Mappings</code></a>
+   any role;
+    see the <a class="core-mapping" href="#mapping_role_table"><code>Core Accessibility API Role Mappings</code></a>    and the <a class="graphics-mapping" href="#mapping_role_table"><code>Graphics Accessibility API Role Mappings</code></a>
   </td>
 </tr>
 <tr id="role-map-pattern">
@@ -1511,8 +1539,8 @@ var mappingTableLabels = {
     </p>
   </td>
   <td>
-    any role;
-    see <a class="core-mapping" href="#mapping_role_table"><code>Role Mappings</code></a>
+   any role;
+    see the <a class="core-mapping" href="#mapping_role_table"><code>Core Accessibility API Role Mappings</code></a>    and the <a class="graphics-mapping" href="#mapping_role_table"><code>Graphics Accessibility API Role Mappings</code></a>
   </td>
 </tr>
 <tr id="role-map-polyline">
@@ -1531,8 +1559,8 @@ var mappingTableLabels = {
     </p>
   </td>
   <td>
-    any role;
-    see <a class="core-mapping" href="#mapping_role_table"><code>Role Mappings</code></a>
+   any role;
+    see the <a class="core-mapping" href="#mapping_role_table"><code>Core Accessibility API Role Mappings</code></a>    and the <a class="graphics-mapping" href="#mapping_role_table"><code>Graphics Accessibility API Role Mappings</code></a>
   </td>
 </tr>
 <tr id="role-map-radialgradient">
@@ -1558,8 +1586,8 @@ var mappingTableLabels = {
     </p>
   </td>
   <td>
-    any role;
-    see <a class="core-mapping" href="#mapping_role_table"><code>Role Mappings</code></a>
+   any role;
+    see the <a class="core-mapping" href="#mapping_role_table"><code>Core Accessibility API Role Mappings</code></a>    and the <a class="graphics-mapping" href="#mapping_role_table"><code>Graphics Accessibility API Role Mappings</code></a>
   </td>
 </tr>
 <tr id="role-map-script">
@@ -1621,8 +1649,8 @@ var mappingTableLabels = {
     </p>
   </td>
   <td>
-    any role;
-    see <a class="core-mapping" href="#mapping_role_table"><code>Role Mappings</code></a>
+   any role;
+    see the <a class="core-mapping" href="#mapping_role_table"><code>Core Accessibility API Role Mappings</code></a>    and the <a class="graphics-mapping" href="#mapping_role_table"><code>Graphics Accessibility API Role Mappings</code></a>
   </td>
 </tr>
 <tr id="role-map-switch">
@@ -1668,7 +1696,7 @@ var mappingTableLabels = {
                       <dt><a href="https://developer.gnome.org/atk/stable/">ATK</a></dt>
                     <dd>
                       <span class="type">Role: </span>
-                      <code>ATK_ROLE_PARAGRAPH</code>
+                      <code>ATK_ROLE_SECTION</code>
                     </dd>
                     <dd>
                       <span class="type">Interfaces: </span>
@@ -1697,8 +1725,8 @@ var mappingTableLabels = {
     </p>
   </td>
   <td>
-    any role;
-    see <a class="core-mapping" href="#mapping_role_table"><code>Role Mappings</code></a>
+   any role;
+    see the <a class="core-mapping" href="#mapping_role_table"><code>Core Accessibility API Role Mappings</code></a>    and the <a class="graphics-mapping" href="#mapping_role_table"><code>Graphics Accessibility API Role Mappings</code></a>
   </td>
 </tr>
 <tr id="role-map-textpath">
@@ -1723,8 +1751,8 @@ var mappingTableLabels = {
     </p>
   </td>
   <td>
-    any role;
-    see <a class="core-mapping" href="#mapping_role_table"><code>Role Mappings</code></a>
+   any role;
+    see the <a class="core-mapping" href="#mapping_role_table"><code>Core Accessibility API Role Mappings</code></a>    and the <a class="graphics-mapping" href="#mapping_role_table"><code>Graphics Accessibility API Role Mappings</code></a>
   </td>
 </tr>
 <tr id="role-map-title">
@@ -1768,8 +1796,8 @@ var mappingTableLabels = {
     </p>
   </td>
   <td>
-    any role;
-    see <a class="core-mapping" href="#mapping_role_table"><code>Role Mappings</code></a>
+   any role;
+    see the <a class="core-mapping" href="#mapping_role_table"><code>Core Accessibility API Role Mappings</code></a>    and the <a class="graphics-mapping" href="#mapping_role_table"><code>Graphics Accessibility API Role Mappings</code></a>
   </td>
 </tr>
 <tr id="role-map-use">
@@ -1868,8 +1896,8 @@ var mappingTableLabels = {
     </div>
   </td>
   <td>
-    any role;
-    see <a class="core-mapping" href="#mapping_role_table"><code>Role Mappings</code></a>
+   any role;
+    see the <a class="core-mapping" href="#mapping_role_table"><code>Core Accessibility API Role Mappings</code></a>    and the <a class="graphics-mapping" href="#mapping_role_table"><code>Graphics Accessibility API Role Mappings</code></a>
   </td>
 </tr>
 <tr id="role-map-video">
@@ -1975,66 +2003,103 @@ var mappingTableLabels = {
         <a class="termref">accessible description</a>, 
         <a class="termref" data-lt="user agent">user agent</a>s MUST conform 
         to the section titled 
-        <a class="accname" href="#mapping_additional_nd">Name and Description</a> of the [[!ACCNAME-AAM]] specification,
-        with the modifications in this section the SVG host language.
-      </p>
-    <section id="mapping_additional_nd_te_element">
-      <h4>Text Alternative for an Element</h4>
-      <p>
-        The algorithm for determining the text alternative of an element, defined in the <a class="accname" href="#mapping_additional_nd_te_element">Text Alternative for an Element</a> section of the Accessible Name and Description: Computation and API Mappings 1.1 [[!ACCNAME-AAM]], should be applied using the following rules for the semantic features of HTML.
+        <a class="accname" href="#mapping_additional_nd_te">Text Alternative Computation</a> of the [[!ACCNAME-AAM]] specification,
+        with the following modifications for the SVG host language:
       </p>
       <ol>
-        <li id="step-element-ariaby">
-          <p>
-            <a class="accname" href="#step-element-ariaby">Step 1</a> is unchanged.
-          </p>
+        <li>
+          Replace <a class="accname" href="#step2A">step 2A</a> with the following:
+          <blockquote>
+            If the current node traversal is <em>not</em> 
+            a result of following <code>aria-labelledby</code>, <code>aria-describedby</code>
+            or a <code>use</code> element reference,
+            and the current node is not included in the accessibility tree
+            according to the rules in
+            <a href="#exclude_elements">Excluding Elements from the Accessibility Tree</a>
+            and <a href="#include_elements">Including Elements in the Accessibility Tree</a>, 
+            return the empty string.
+          </blockquote>
         </li>
-        <li id="step-element-embedded-control">
-          <p>
-            <a class="accname" href="#step-element-embedded-control">Step 2</a> is unchanged.
-          </p>
+        <li>
+          Replace <a class="accname" href="#step2D">step 2D</a> with the following: 
+          <blockquote>
+            <p>
+              Otherwise, if performing a text alternative computation for an accessible name:
+            </p>  
+            <ul>
+              <li>
+                If the current node has at least one direct child <code>title</code> element,
+                select the appropriate title 
+                based on the language rules for the SVG specification,
+                and return the title text alternative as a flat string.
+              </li>
+              <li>
+                If the current node is a link,
+                and there was no child <code>title</code> element,
+                but it has an <code>xlink:title</code> attribute,
+                return the value of that attribute.
+              </li>
+              <li>
+                If the current node is a <code>use</code> element,
+                and there was no child <code>title</code> element,
+                but it has a valid <code>href</code> or <code>xlink:href</code> attribute
+                pointing to another element in the same document,
+                set the current node to the referenced element
+                and compute the text alternative from step 2
+                as if that element had been referenced with <code>aria-labelledby</code>.
+              </li>
+            </ul>
+            <p>
+              If performing a text alternative computation for an accessible description:
+            </p>
+            <ul>
+              <li>
+                If the current node has at least one direct child <code>desc</code> element,
+                select the appropriate description 
+                based on the language rules for the SVG specification,
+                and return the concatenated text content of the description.
+              </li>
+              <li>
+                If the current node is a <code>use</code> element,
+                and there was no child <code>desc</code> element,
+                but it has a valid <code>href</code> or <code>xlink:href</code> attribute
+                pointing to another element in the same document,
+                set the current node to the referenced element
+                and compute the text alternative from step 2
+                as if that element had been referenced with <code>aria-describedby</code>.
+              </li>
+            </ul>
+          </blockquote>
         </li>
-        <li id="step-element-label">
-          <p>
-            <a class="accname" href="#step-element-label">Step 3</a> is unchanged. 
-          </p>
+        <li>
+          In <a class="accname" href="#step2F">step 2F</a>, 
+          modify <a class="accname" href="#step2F.ii">step iii</a>
+          by replacing:
+          <blockquote>
+            <p>For each child node of the current node:</p>
+          </blockquote>
+          with
+          <blockquote>
+            <p>If the element is a text container element,
+              for each child node of the current node:
+            </p>
+          </blockquote>
         </li>
-        <li id="step-element-native">
-          <p>
-            In <a class="accname" href="#step-element-native">Step 4</a>, when computing an <a>accessible name</a>, the text alternative element is a direct child <code>title</code> element, if present. If there is more than one such direct child element, the appropriate element is selected according to language attributes to best match the user's preferences, following <a href="http://www.w3.org/TR/SVG2/struct.html#DescriptionAndTitleElements">the rules in the SVG 2 specification</a> [[!SVG]].
-          </p>
-          <p>
-            When computing an <a>accessible description</a>, the text alternative element is a direct child <code>desc</code> element, if present, selected according to the language rules for SVG 2.
-          </p>
-          <p>If the above child elements are not present, the following should be considered as alternative text sources:</p>
-          <ul>
-            <li>For link (<code>a</code>) elements, an <code>xlink:title</code> attribute provides an accessible name.</li>
-            <li>For <code>use</code> elements with a valid <code>href</code> or <code>xlink:href</code> attribute that references another element in the same document, the referenced element is a labelling element for both name and description.</li>
-          </ul>
-        </li>
-        <li id="step-element-contents">
-          <p>
-            In <a class="accname" href="#step-element-contents">Step 5</a>, a <a class="termref">hidden</a> node includes any of the following:
-          </p>
-          <ul>
-            <li>an element with a computed style of <code>display: none</code> for itself or any ancestor</li>
-            <li>an element that is never rendered, regardless of its <code>display</code> property,  as described in the sections <a href="#exclude_elements">Excluding Elements from the Accessibility Tree</a>; this includes the <code>title</code> and <code>desc</code> elements and any other element with "no role may be applied" in the <a href="#role-mapping-table">role mapping table</a></li>
-            <li>an element that is neither visible nor interactive due to the interplay of the CSS <code>visibility</code>, <code>fill</code>, <code>stroke</code>, and <code>pointer-events</code> properties and the <code>tabindex</code> attribute, as defined in the sections <a href="#exclude_elements">Excluding Elements from the Accessibility Tree</a> and <a href="#include_elements">Including Elements in the Accessibility Tree</a> of this specification</li>
-            <li>an element with an <code>aria-hidden="true"</code> attribute for itself or any ancestor</li>
-            <li>any child text nodes and CSS-generated content nodes <strong>unless</strong> the <a class="accname" href="#term-current-node"><var>current node</var></a> is a text-container element (<code>text</code>, <code>tspan</code>, or <code>textPath</code>)
-          </ul>
-        </li>
-          <p>
-            For <a class="accname" href="#step-element-contents-whitespace">Step 5D</a>, the <code>tspan</code> and <code>textPath</code> elements are always considered to be displayed inline, regardless of text positioning attributes or the value of the <code>display</code> property.  The <code>text</code> element and all other SVG elements are always considered to be displayed block (i.e., spaces are inserted before and after the compiled alternative text).  Elements in other namespaces (e.g., HTML or MathML elements that are included as child content of SVG <code>foreignObject</code>, <code>metadata</code>, or alternative text elements) are either inline or block display according to the rules of that language or the CSS <code>display</code> property.
-          </p>
-        </li>
-        <li id="step-element-tooltip">
-          <p>
-            In <a class="accname" href="#step-element-tooltip">Step 6</a>, the tooltip text is provided by the value of the direct child <code>title</code> element, if present, selected according to the language rules from SVG 2. For link (<code>a</code>) elements only, the <code>xlink:title</code> attribute is an alternative source of tooltip text, if no <code>title</code> element is present.
-          </p>
+        <li>
+          Replace <a class="accname" href="#step2H">step 2H</a> with the following:
+          <blockquote>
+            <p>
+              Otherwise, if performing a text alternative computation for an accessible description,
+              and the current node has at least one direct child <code>title</code> element,
+              but the title elements were <em>not</em> used 
+              when generating the accessible name for the node,
+              then select the appropriate title 
+              based on the language rules for the SVG specification,
+              and return the title text content as the description.
+            </p>
+          </blockquote>
         </li>
       </ol>
-    </section>
 <!--
       <div class="note">
         <p>
@@ -2098,14 +2163,13 @@ var mappingTableLabels = {
           <li><code>aria-labelledby</code></li>
           <li><code>aria-label</code></li>
           <li>a direct child <code>title</code> element</li>
-          <li>for an <code>a</code> element, the <code>xlink:title</code> attribute</li>
+          <li><code>xlink:title</code> attribute</li>
           <li>
             for a <code>use</code> element, 
             the accessible name calculated for the re-used content
           </li>
           <li>
-            for elements with a role that supports name from contents
-            (such as <code>role="button"</code>),
+            for text container elements,
             the text content
           </li>
         </ol>
@@ -2121,13 +2185,14 @@ var mappingTableLabels = {
             the accessible description calculated for the re-used content
           </li>
           <li>
+            for text container elements,
+            the text content
+          </li>
+          <li>
             a direct child <code>title</code> element
             that provides a tooltip, 
             when ARIA label attributes are used 
             to provide a different accessible name
-          </li>
-          <li>for an <code>a</code> element, the <code>xlink:title</code> attribute,
-            when it is not the accessible name
           </li>
         </ol>
         <p>

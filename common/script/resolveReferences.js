@@ -16,6 +16,18 @@ function linkCrossReferences() {
     respecConfig.htmlMappingURLs[respecConfig.specStatus] : null
   );
 
+  var dpubModURL = ( respecConfig.dpubModURLs ?
+    respecConfig.dpubModURLs[respecConfig.specStatus] : null
+  );
+
+  var graphicsModURL = ( respecConfig.graphicsModURLs ?
+    respecConfig.graphicsModURLs[respecConfig.specStatus] : null
+  );
+  var graphicsMappingModURL = ( respecConfig.graphicsMappingModURLs ?
+    respecConfig.graphicsMappingModURLs[respecConfig.specStatus] : null
+  );
+
+
   function setHrefs (selString, baseUrl) {
     $ (selString).each (
       function (idx, el) {
@@ -54,8 +66,31 @@ function linkCrossReferences() {
     setHrefs ('a.html-mapping', htmlMappingURL);
   }
   else {
-    console.log ("linkCrossReferences():  Note -- htmleMappingURL is not defined.");
+    console.log ("linkCrossReferences():  Note -- htmlMappingURL is not defined.");
   }
+  // Links to the DPub WAI-ARIA Module.
+  if (!!dpubModURL) {
+    setHrefs ('a.dpub-role-reference, a.dpub-property-reference, a.dpub-state-reference, a.dpub', dpubModURL);
+  }
+  else {
+    console.log ("linkCrossReferences():  specBaseURL is not defined.");
+  }
+// Links to the Graphics WAI-ARIA Module.
+  if (!!graphicsModURL) {
+    setHrefs ('a.graphics-role-reference, a.graphics-property-reference, a.graphics-state-reference, a.graphics', graphicsModURL);
+  }
+  else {
+    console.log ("linkCrossReferences():  specBaseURL is not defined.");
+  }
+// Links to the Graphics Mapping WAI-ARIA Module.
+  if (!!graphicsMappingModURL) {
+    setHrefs ('a.graphics-role-mapping, a.graphics-property-mapping, a.graphics-state-mapping, a.graphics-mapping', graphicsMappingModURL);
+  }
+  else {
+    console.log ("linkCrossReferences():  specBaseURL is not defined.");
+  }
+
+
 
 }
 
@@ -112,13 +147,25 @@ function restrictReferences(utils, content) {
     });
 
     // add a handler to come in after all the definitions are resolved
+    //
+    // New logic: If the reference is within a 'dl' element of
+    // class 'termlist', and if the target of that reference is
+    // also within a 'dl' element of class 'termlist', then
+    // consider it an internal reference and ignore it.
 
     respecEvents.sub('end', function(message) {
         if (message == 'core/link-to-dfn') {
             // all definitions are linked
             $("a.internalDFN").each(function () {
                 var $item = $(this) ;
-                var r = $item.attr('href').replace(/^#/,"") ;
+                var t = $item.attr('href');
+                if ( $item.closest('dl.termlist').length ) {
+                    if ( $(t).closest('dl.termlist').length ) {
+                        // do nothing
+                        return;
+                    }
+                }
+                var r = t.replace(/^#/,"") ;
                 if (termNames[r]) {
                     delete termNames[r] ;
                 }
@@ -139,11 +186,6 @@ function restrictReferences(utils, content) {
             });
         }
     });
-    
-    respecEvents.sub ('end-all', function () {
-        $('body').attr('aria-busy', 'false');  // or, remove it entirely?
-    });
-    
     return (base.innerHTML);
 }
 
