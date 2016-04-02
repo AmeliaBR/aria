@@ -4545,10 +4545,33 @@
 		<div class="role" id="password">
 			<rdef>password</rdef>
 			<div class="role-description">
-				<p>[ARIA 1.1] An <rref>input</rref> for entering a password.</p>
-				<p>The <code>password</code> <a>role</a> makes it possible for <a>assistive technologies</a> to customize their behavior in order to not inadvertently expose private information. For instance, a screen reader which normally echoes key presses might instead remain silent or echo each displayed character after it is inserted. In order to facilitate the latter behavior, when the password value is obscured on screen, authors SHOULD set the <code>password</code> element's text to characters which obscure the real value (such as asterisks or bullets). Authors SHOULD also update that text each time a character is inserted or deleted by the user.  
-                If the password value is <em>not</em> currently being obscured on screen, the author SHOULD clearly communicated this to all users, for instance by modifying the accessible name.</p>
-				<p>In order to ensure that passwords will not be overheard during input, assistive technologies SHOULD NOT echo key presses of printable characters when an element with role <code>password</code> has focus, unless the user has explicitly enabled this option. If the user has enabled key echo, assistive technologies SHOULD present each rendered character as it is inserted rather than speaking a predetermined character, such as &quot;star.&quot; Presenting the rendered characters ensures that all users receive the same information, including notification when the value is being entered into an unobscured <code>password</code> field.</p>
+				<p>[ARIA 1.1] An <rref>input</rref> for entering a password.  
+                The true value of the input text is hidden from nearby observers,
+                unless specifically revealed by the user.
+                </p>
+				<p>The <code>password</code> <a>role</a> makes it possible for <a>assistive technologies</a> to customize their behavior in order to not inadvertently expose private information. For instance, a screen reader which normally echoes key presses can instead remain silent or echo the characters that are displayed.</p>
+                <p>In order to facilitate the echoing of maksed characters, when the password value is obscured on screen, authors SHOULD set the <code>password</code> element's text to characters which obscure the real value (such as asterisks or bullets). Authors SHOULD also update that text each time a character is inserted or deleted by the user. 
+                If the password value is <em>not</em> currently being obscured on screen,
+                and will be displayed in plain text as the user types,
+                the author SHOULD clearly communicated this to all users, 
+                for instance by modifying the element's accessible name to include the phrase "visible" or "text shown".</p>
+                <p> 
+                User agents MUST ensure that the text value exposed to assistive technologies
+                always reflects the actual text used to render the element.
+                </p>
+				<p>In order to ensure that passwords will not be overheard during input, assistive technologies SHOULD NOT echo key presses of printable characters when an element with role <code>password</code> has focus, unless the user has explicitly enabled this option. If the user has enabled key echo or word echo, assistive technologies SHOULD present the rendered character or word as it is inserted into the displayed text.
+                Assistive technologies MUST NOT use a predetermined sound or character, such as &quot;star,&quot; to imply that characters are automatically being masked as they are input.
+                Presenting the rendered characters ensures that all users receive the same information, including notification when the value is being entered into a plain text <code>password</code> field.</p>
+				<div class="note">
+                    <p>The requirements on assistive technologies outlined here are stricter than those commonly used for native password fields.
+                    In particular, many assistive technologies apply their own masking of password field text, without querying the actual displayed value.
+                    To ensure that assistive technologies can distinguish between custom and native password widgets, they are exposed using different mechanisms in the <a>accessibility API</a>.
+                    </p>
+                    <p>The proper functioning of a custom password field requires coordination from web page authors, user agents, and assistive technologies.
+                    The behavior outlined here is intended to ensure that all users have the same experience, and will know if the password can currently be seen or heard by other people in their environment.
+                    However, nothing in WAI-ARIA (or in HTML) can protect a password from being mis-used by a malicious web page script, host web server, or eavesdropper on an insecure network connection.
+                    </p>
+                </div>
 			</div>
 			<table class="role-features">
 				<caption>Characteristics:</caption>
